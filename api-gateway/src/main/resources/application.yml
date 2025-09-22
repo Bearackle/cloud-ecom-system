@@ -1,0 +1,47 @@
+server:
+    port: 8303
+spring:
+    application:
+        name: api-gateway
+    cloud:
+        gateway:
+            server:
+                webflux:
+                    cors:
+                        corsConfigurations:
+                            '[/api/v1/**]':
+                                allowedOrigins: "http://localhost:3000"
+                                exposedHeaders: "page-total-count"
+                                allowedHeaders: "*"
+                                allowedMethods:
+                                  - GET
+                                  - POST
+                                  - PUT
+                                  - DELETE
+                                  - PATCH
+                                  - OPTIONS
+                                  - HEAD
+                    discovery:
+                        locator:
+                            enabled: true
+                            lower-case-service-id: true
+                    routes:
+                      - id: user-service
+                        uri: lb://user-service
+                        predicates:
+                          - Path=/api/v1/user/**
+                        filters:
+                          - StripPrefix=0
+eureka:
+    client:
+        service-url:
+            defaultZone: http://localhost:8301/eureka
+        fetch-registry: true
+        register-with-eureka: true
+    instance:
+        hostname: localhost
+logging:
+    level:
+        org.springframework.cloud.gateway: DEBUG
+        reactor.netty.http.client: DEBUG
+        org.springframework.web: DEBUG
