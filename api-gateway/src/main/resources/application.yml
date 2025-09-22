@@ -7,7 +7,7 @@ spring:
         gateway:
             server:
                 webflux:
-                    globalcors:
+                    cors:
                         corsConfigurations:
                             '[/api/v1/**]':
                                 allowedOrigins: "http://localhost:3000"
@@ -40,3 +40,8 @@ eureka:
         register-with-eureka: true
     instance:
         hostname: localhost
+logging:
+    level:
+        org.springframework.cloud.gateway: DEBUG
+        reactor.netty.http.client: DEBUG
+        org.springframework.web: DEBUG

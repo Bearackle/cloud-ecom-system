@@ -1,4 +1,4 @@
-package com.dinhhuan.registryserver;
+package com.dinhhuan;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

@@ -1,10 +1,11 @@
 package com.dinhhuan.service;
 
-import com.dinhhuan.dto.UserFullInfo;
-import com.dinhhuan.dto.UserInfoDto;
+import com.dinhhuan.dto.request.UserCreationRequest;
+import com.dinhhuan.dto.response.UserInfoResponse;
+
 
 
 public interface UserService {
-    UserInfoDto getUserInfo(Long userId);
-    void createUser(UserFullInfo user);
+    UserInfoResponse getUserInfo(Long userId);
+    void createUser(UserCreationRequest user);
 }

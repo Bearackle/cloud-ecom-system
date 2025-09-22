@@ -1,4 +1,4 @@
-package com.dinhhuan.userservice;
+package com.dinhhuan;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

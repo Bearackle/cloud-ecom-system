@@ -1,16 +1,17 @@
-package com.dinhhuan.dto;
+package com.dinhhuan.dto.request;
 
-import com.dinhhuan.model.Address;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
-import java.util.List;
 
-public class UserInfoDto {
-    private Long id;
+@Getter
+@Setter
+public class UserCreationRequest {
     private String fullName;
     private String email;
+    private String location;
     private String phoneNumber;
     private String gender;
     private LocalDate birthday;
-    private List<Address> address;
 }
