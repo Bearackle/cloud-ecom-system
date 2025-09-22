@@ -1,4 +1,4 @@
-package com.dinhhuan.registryserver;
+package com.dinhhuan;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

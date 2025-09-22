@@ -1,0 +1,27 @@
+server:
+    port: 8302
+spring:
+    application:
+        name: user-service
+    datasource:
+        url: jdbc:mysql://localhost:3306/user_db
+        username: usr-service
+        password: user-service-01
+        driver-class-name: com.mysql.cj.jdbc.Driver
+    jpa:
+        hibernate:
+            ddl-auto: validate
+        properties:
+            hibernate:
+                dialect: org.hibernate.dialect.MySQL8Dialect
+    flyway:
+        locations: classpath:db/migration
+eureka:
+    client:
+        service-url:
+            defaultZone: http://localhost:8301/eureka
+        fetch-registry: true
+        register-with-eureka: true
+    instance:
+        hostname: localhost
+
