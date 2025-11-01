@@ -1,9 +1,8 @@
 package com.dinhhuan.service;
 
 import com.dinhhuan.dto.request.UserCreationRequest;
+import com.dinhhuan.dto.request.UserCredentials;
 import com.dinhhuan.dto.response.UserInfoResponse;
-
-
 
 public interface UserService {
     UserInfoResponse getUserInfo(Long userId);

@@ -1,6 +1,6 @@
 package com.dinhhuan.controller;
 
-import com.dinhhuan.common.Data;
+import com.dinhhuan.commons.regular.Data;
 import com.dinhhuan.dto.request.UserCreationRequest;
 import com.dinhhuan.dto.response.UserInfoResponse;
 import com.dinhhuan.service.UserService;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/api/v1/user")
+@RequestMapping("/user")
 public class UserController {
     private final UserService userService;
     @GetMapping(path = "/info/{id}")

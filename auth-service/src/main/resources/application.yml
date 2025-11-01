@@ -1,21 +1,24 @@
 server:
-    port: 8302
+    port: 8304
 spring:
     application:
-        name: user-service
+        name: auth-service
     datasource:
-        url: jdbc:postgresql://localhost:5432/user_db
-        username: usr-service
-        password: user-service-01
+        url: jdbc:postgresql://${DATASOURCE_HOST:localhost}:5432/auth_db
+        username: auth-service
+        password: auth-service-01
         driver-class-name: org.postgresql.Driver
     jpa:
         hibernate:
             ddl-auto: validate
+        properties:
+            hibernate:
+                dialect: org.hibernate.dialect.PostgreSQLDialect
     flyway:
         locations: classpath:db/migration
-        url: jdbc:postgresql://localhost:5432/user_db
-        user: usr-service
-        password: user-service-01
+        url: jdbc:postgresql://${DATASOURCE_HOST:localhost}:5432/auth_db
+        user: auth-service
+        password: auth-service-01
     azure:
         servicebus:
             connection-string: ${CONNECTION_STRING}
@@ -29,6 +32,10 @@ eureka:
         register-with-eureka: true
     instance:
         hostname: localhost
+jwt:
+    secret: WvqWxVY0NuX469fNVMVT3YsJmLevE6Vk4TOwfwqhVOaiGYLE8jTtmmclg7Zm/LOAbRJKPq5SAzlWh0NI7Y01urMPvreS13eo89hb7YaDd7k=
+    expiration: 604800
+
 logging:
     level:
         org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator: debug
@@ -38,5 +45,3 @@ logging:
         org.hibernate.engine.jdbc.spi: DEBUG
         org.hibernate.type.descriptor.sql: TRACE
         org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentImpl: TRACE
-
-

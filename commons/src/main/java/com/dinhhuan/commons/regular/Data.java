@@ -1,4 +1,4 @@
-package com.dinhhuan.common;
+package com.dinhhuan.commons.regular;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

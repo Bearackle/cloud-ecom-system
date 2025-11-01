@@ -1,21 +1,19 @@
-create table users(
-                      id bigint primary key,
-                      email varchar(50) unique not null,
-                      full_name varchar(100) not null,
-                      location varchar(30) default 'vietnam',
-                      phone_number varchar(10),
-                      gender varchar(10),
-                      lang varchar(10) default 'vi',
-                      birthday date,
-                      registration_date datetime default CURRENT_TIMESTAMP,
-                      updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                      background_color varchar(30) default 'blue',
-                      avt varchar(100)
+CREATE TABLE addresses (
+                           id BIGINT NOT NULL,
+                           user_id BIGINT NOT NULL,
+                           address VARCHAR(200) NOT NULL,
+                           PRIMARY KEY (id)
+);
+CREATE TABLE users (
+                       id BIGINT,
+                       email VARCHAR(50) UNIQUE NOT NULL,
+                       full_name VARCHAR(100) NOT NULL,
+                       location VARCHAR(30) DEFAULT 'vietnam',
+                       phone_number VARCHAR(10),
+                       lang VARCHAR(10) DEFAULT 'vi',
+                       registration_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                       PRIMARY KEY (id)
 );
 
-create table address(
-                        id bigint primary key,
-                        user_id bigint,
-                        address varchar(200) not null,
-                        constraint fk_user foreign key (user_id) references users(id)
-)
+alter table if exists addresses add constraint fk_address_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
