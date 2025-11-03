@@ -16,11 +16,6 @@ spring:
         url: jdbc:postgresql://localhost:5432/user_db
         user: usr-service
         password: user-service-01
-    azure:
-        servicebus:
-            connection-string: ${CONNECTION_STRING}
-            queue:
-                name: user-auth
     cloud:
         azure:
             servicebus:
