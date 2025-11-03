@@ -27,13 +27,13 @@ spring:
                             lower-case-service-id: true
                     routes:
                       - id: user-service
-                        uri: lb://user-service
+                        uri: lb://USER-SERVICE
                         predicates:
                           - Path=/user/**
                         filters:
                           - StripPrefix=0
                       - id: auth-service
-                        uri: lb://auth-service
+                        uri: lb://AUTH-SERVICE
                         predicates:
                           - Path=/auth/**
                         filters:
@@ -44,8 +44,28 @@ eureka:
             defaultZone: http://localhost:8301/eureka
         fetch-registry: true
         register-with-eureka: true
+        registry-fetch-interval-seconds: 5
     instance:
         hostname: localhost
+auth:
+    service:
+        url: lb://AUTH-SERVICE
+secure:
+    ignored:
+        urls:
+          - /swagger-ui/
+          - /swagger-resources/**
+          - /**/v2/api-docs
+          - /**/*.html
+          - /**/*.js
+          - /**/*.css
+          - /**/*.png
+          - /**/*.map
+          - /favicon.ico
+          - /actuator/**
+          - /druid/**
+          - /auth/login
+          - /auth/register
 logging:
     level:
         org.springframework.cloud.gateway: DEBUG

@@ -21,11 +21,11 @@ public class User {
     @Column(name = "email", nullable = false)
     private String email;
     @Column(name = "location", nullable = true)
-    private String location;
+    private String location = "vietnam";
     @Column(name = "phone_number", nullable = true)
     private String phoneNumber;
     @Column(name = "lang", nullable = true)
-    private String language;
+    private String language = "vi";
     @Column(name = "registration_date", nullable = false)
     private LocalDateTime registrationDate;
     @Column(name = "updated_at", nullable = false)

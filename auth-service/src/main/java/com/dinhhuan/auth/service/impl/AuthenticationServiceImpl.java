@@ -12,9 +12,13 @@ import com.dinhhuan.auth.util.JwtUtils;
 import com.dinhhuan.commons.auth.UserLoginRequest;
 import com.dinhhuan.commons.auth.UserRegistrationDto;
 import com.dinhhuan.commons.uid.DefaultUid;
+import jakarta.ws.rs.core.SecurityContext;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +27,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthenticationServiceImpl implements AuthenticationService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -57,13 +62,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public boolean authenticate(UserAuthRequest userAuth) {
-        var user = userRepository.findById(userAuth.getUserId());
-        if(!user.isPresent()){
-            return false;
-        }
-        return passwordEncoder.matches(userAuth.getPassword(), user.get().getPassword());
+        UserDetails user = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return tokenUtils.validateToken(userAuth.getToken(), user);
     }
-
     @Override
     public Long updatePassword(UserCredentials userAuth) {
         return 0L;

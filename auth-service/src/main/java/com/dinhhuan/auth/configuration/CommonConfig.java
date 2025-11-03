@@ -17,11 +17,13 @@ public class CommonConfig {
     @Bean
     public JwtUtils jwtUtils() { return new JwtUtils(); }
     @Bean
-    public JwtAuthenticationTokenFilter authenticationTokenFilter() { return new JwtAuthenticationTokenFilter(); }
-    @Bean
     public ObjectMapper objectMapper() {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
         return mapper;
     }
+    @Bean
+    public RestAuthenticationEntryPoint restAuthenticationEntryPoint() { return new RestAuthenticationEntryPoint(); }
+    @Bean
+    public RestfulAccessDeniedHandler restfulAccessDeniedHandler() { return new RestfulAccessDeniedHandler(); }
 }

@@ -13,8 +13,8 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Slf4j
 public class UserCreationProducer {
-    private ServiceBusSenderClient senderClient;
-    private ObjectMapper objectMapper;
+    private final ServiceBusSenderClient senderClient;
+    private final ObjectMapper objectMapper;
     public void sendMessage(UserRegistrationDto user) {
         try{
             String messageBody = objectMapper.writeValueAsString(user);

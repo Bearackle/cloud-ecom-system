@@ -2,13 +2,16 @@ package com.dinhhuan.auth.controller;
 
 import com.dinhhuan.auth.dto.UserAuthRequest;
 import com.dinhhuan.auth.dto.UserCredentials;
+import com.dinhhuan.auth.model.UserIdDetails;
 import com.dinhhuan.auth.service.AuthenticationService;
 import com.dinhhuan.commons.auth.UserLoginRequest;
 import com.dinhhuan.commons.auth.UserRegistrationDto;
 import com.dinhhuan.commons.regular.Data;
-import jakarta.ws.rs.Path;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,36 +23,37 @@ import java.util.Map;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
+@Slf4j
 public class AuthenticationController {
     private final AuthenticationService authenticationService;
     @PostMapping("/login")
-    public ResponseEntity<Data<Map<String,String>>> login(@RequestBody UserLoginRequest userLogin){
+    public ResponseEntity<Map<String,String>> login(@RequestBody UserLoginRequest userLogin){
         Map<String, String> result = new HashMap<>();
         String token = authenticationService.login(userLogin);
         if(token == null){
             return ResponseEntity.notFound().build();
         }
         result.put("token", token);
-        return ResponseEntity.ok(Data.<Map<String,String>>builder().data(result).build());
+        return ResponseEntity.ok(result);
     }
     @PostMapping("/register")
-    public ResponseEntity<Data<?>> register(@RequestBody UserRegistrationDto user){
-        Map<String, String> result = new HashMap<>();
+    public ResponseEntity<Map<String, Long>> register(@RequestBody UserRegistrationDto user){
+        Map<String, Long> result = new HashMap<>();
         long userId = authenticationService.register(user);
         if(userId == 0){
             return ResponseEntity.badRequest().build();
         }
-        result.put("userId", String.valueOf(userId));
-        return ResponseEntity.ok(Data.<Map<String,String>>builder().data(result).build());
+        result.put("userId", userId);
+        return ResponseEntity.ok(result);
     }
-    @PostMapping("/authenticate")
-    public ResponseEntity<Data<Map<String, Boolean>>> authenticate(@RequestBody UserAuthRequest userAuth){
+    @PostMapping("/introspect")
+    public ResponseEntity<Map<String, String>> authenticate(@RequestBody UserAuthRequest userAuth){
         boolean isAuthenticated = authenticationService.authenticate(userAuth);
-        Map<String, Boolean> result = new HashMap<>();
-        result.put("isAuthenticated", isAuthenticated);
-        return ResponseEntity.ok(
-                Data.<Map<String, Boolean>>builder().data(result)
-                        .build());
+        var user = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Map<String, String> result = new HashMap<>();
+        result.put("isAuthenticated", Boolean.toString(isAuthenticated));
+        result.put("userId", String.valueOf(((UserIdDetails) user).getUserId()));
+        return ResponseEntity.ok(result);
     }
     @PostMapping("/change-password")
     public ResponseEntity<Data<Map<String,Boolean>>> changePassword(@RequestBody UserCredentials userCredentials)

@@ -8,17 +8,17 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class ServiceBusProducerConfig {
-//    @Value("${spring.cloud.azure.servicebus.connection-string}")
-//    private String connectionString;
-//
-//    @Value("${servicebus.queue.name}")
-//    private String queueName;
-//    @Bean
-//    public ServiceBusSenderClient serviceBusSenderClient() {
-//        return new ServiceBusClientBuilder()
-//                .connectionString(connectionString)
-//                .sender()
-//                .queueName(queueName)
-//                .buildClient();
-//    }
+    @Value("${spring.cloud.azure.servicebus.connection-string}")
+    private String connectionString;
+
+    @Value("${spring.cloud.azure.servicebus.queue}")
+    private String queueName;
+    @Bean
+    public ServiceBusSenderClient serviceBusSenderClient() {
+        return new ServiceBusClientBuilder()
+                .connectionString(connectionString)
+                .sender()
+                .queueName(queueName)
+                .buildClient();
+    }
 }

@@ -19,6 +19,10 @@ import java.util.List;
 public class SecurityConfig {
     @Autowired
     private JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter;
+    @Autowired
+    private RestfulAccessDeniedHandler restfulAccessDeniedHandler;
+    @Autowired
+    private RestAuthenticationEntryPoint restAuthenticationEntryPoint;
     @Bean
     SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         List<String> ignoreUrls = List.of("/auth/login", "/auth/register");
@@ -33,6 +37,9 @@ public class SecurityConfig {
                 ).csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .exceptionHandling(exception ->
+                        exception.accessDeniedHandler(restfulAccessDeniedHandler)
+                                .authenticationEntryPoint(restAuthenticationEntryPoint))
                 .addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
         return httpSecurity.build();
     }

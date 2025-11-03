@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -26,7 +25,7 @@ import java.sql.SQLException;
 @ComponentScan(basePackages = "com.baidu.fsg.uid")
 @MapperScan(
         basePackages = "com.baidu.fsg.uid.worker.dao",
-        sqlSessionFactoryRef = "sqlSessionFactory"
+        sqlSessionFactoryRef = "uidSqlSessionFactory"
 )
 @EnableTransactionManagement
 public class MybatisUid {
@@ -87,7 +86,7 @@ public class MybatisUid {
     @Value("${datasource.removeAbandonedTimeout}")
     private int removeAbandonedTimeout;
 
-    @Bean(name = "dataSourceUid")
+    @Bean(name = "uidDataSource")
     public DataSource dataSource() throws SQLException {
         System.out.println("=== UID DataSource Config ===");
         System.out.println("URL: " + url);
@@ -115,8 +114,8 @@ public class MybatisUid {
         ds.setRemoveAbandonedTimeout(removeAbandonedTimeout);
         return ds;
     }
-    @Bean(name = "sqlSessionFactory")
-    public SqlSessionFactory sqlSessionFactory(@Qualifier("dataSourceUid") DataSource dataSource) throws Exception {
+    @Bean(name = "uidSqlSessionFactory")
+    public SqlSessionFactory sqlSessionFactory(@Qualifier("uidDataSource") DataSource dataSource) throws Exception {
         SqlSessionFactoryBean factory = new SqlSessionFactoryBean();
         factory.setDataSource(dataSource);
         factory.setMapperLocations(
@@ -124,13 +123,12 @@ public class MybatisUid {
         );
         return factory.getObject();
     }
-    @Bean
-    public DataSourceTransactionManager transactionManager(DataSource dataSource) {
+    @Bean(name = "uidTransactionManager")
+    public DataSourceTransactionManager transactionManager(@Qualifier("uidDataSource") DataSource  dataSource) {
         return new DataSourceTransactionManager(dataSource);
     }
-
-    @Bean
-    public SqlSessionTemplate batchSqlSession(SqlSessionFactory sqlSessionFactory) {
+    @Bean(name = "uidBatchSqlSession")
+    public SqlSessionTemplate batchSqlSession(@Qualifier("uidSqlSessionFactory") SqlSessionFactory sqlSessionFactory) {
         return new SqlSessionTemplate(sqlSessionFactory, ExecutorType.BATCH);
     }
 }
