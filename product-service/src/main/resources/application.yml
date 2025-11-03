@@ -1,5 +1,37 @@
 server:
-  port: 8305
+    port: 8305
 spring:
     application:
         name: product-service
+    datasource:
+        url: jdbc:postgresql://localhost:5432/product_db
+        username: product-service
+        password: product-service-01
+        driver-class-name: org.postgresql.Driver
+    jpa:
+        hibernate:
+            ddl-auto: validate
+    flyway:
+        locations: classpath:db/migration
+        url: jdbc:postgresql://localhost:5432/product_db
+        user: product-service
+        password: product-service-01
+
+eureka:
+    client:
+        service-url:
+            defaultZone: http://localhost:8301/eureka
+        fetch-registry: true
+        register-with-eureka: true
+    instance:
+        hostname: localhost
+
+logging:
+    level:
+        org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator: debug
+        org.hibernate.SQL: debug
+        com.zaxxer.hikari: DEBUG
+        org.hibernate.tool.schema: DEBUG
+        org.hibernate.engine.jdbc.spi: DEBUG
+        org.hibernate.type.descriptor.sql: TRACE
+        org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentImpl: TRACE
