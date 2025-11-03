@@ -19,11 +19,11 @@ spring:
         url: jdbc:postgresql://${DATASOURCE_HOST:localhost}:5432/auth_db
         user: auth-service
         password: auth-service-01
-    azure:
-        servicebus:
-            connection-string: ${CONNECTION_STRING}
-            queue:
-                name: user-auth
+    cloud:
+        azure:
+            servicebus:
+                connection-string: ${CONNECTION_STRING}
+                queue: user-auth
 eureka:
     client:
         service-url:

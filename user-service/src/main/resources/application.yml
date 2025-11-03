@@ -21,6 +21,24 @@ spring:
             connection-string: ${CONNECTION_STRING}
             queue:
                 name: user-auth
+    cloud:
+        azure:
+            servicebus:
+                connection-string: ${CONNECTION_STRING}
+        function:
+            definition: consumerRegistration
+        stream:
+            bindings:
+                consumerRegistration-in-0:
+                    destination: user-auth
+            servicebus:
+                bindings:
+                    consumerRegistration-in-0:
+                        consumer:
+                            auto-complete: true
+                            max-concurrent-calls: 5
+                            prefetch-count: 10
+
 eureka:
     client:
         service-url:
