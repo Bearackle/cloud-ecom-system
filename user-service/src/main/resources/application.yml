@@ -17,11 +17,11 @@ spring:
         user: usr-service
         password: user-service-01
     cloud:
-        azure:
-            servicebus:
-                connection-string: ${CONNECTION_STRING}
         function:
             definition: consumerRegistration
+        azure:
+            servicebus:
+                connection-string: ${CONNECTION_QUEUE_STRING}
         stream:
             bindings:
                 consumerRegistration-in-0:

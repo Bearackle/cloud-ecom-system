@@ -22,7 +22,7 @@ spring:
     cloud:
         azure:
             servicebus:
-                connection-string: ${CONNECTION_STRING}
+                connection-string: ${CONNECTION_QUEUE_STRING}
                 queue: user-auth
 eureka:
     client:

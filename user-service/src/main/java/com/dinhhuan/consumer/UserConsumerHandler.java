@@ -15,7 +15,6 @@ import java.util.function.Consumer;
 @RequiredArgsConstructor
 public class UserConsumerHandler {
     private final UserService userService;
-
     @Bean
     public Consumer<UserRegistrationDto> consumerRegistration(){
         return msg ->{
