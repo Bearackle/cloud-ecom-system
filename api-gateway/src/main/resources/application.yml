@@ -7,20 +7,6 @@ spring:
         gateway:
             server:
                 webflux:
-                    cors:
-                        corsConfigurations:
-                            '[/api/v1/**]':
-                                allowedOrigins: "http://localhost:3000"
-                                exposedHeaders: "page-total-count"
-                                allowedHeaders: "*"
-                                allowedMethods:
-                                  - GET
-                                  - POST
-                                  - PUT
-                                  - DELETE
-                                  - PATCH
-                                  - OPTIONS
-                                  - HEAD
                     discovery:
                         locator:
                             enabled: true
@@ -36,6 +22,12 @@ spring:
                         uri: lb://AUTH-SERVICE
                         predicates:
                           - Path=/auth/**
+                        filters:
+                          - StripPrefix=0
+                      - id: product-service
+                        uri: lb://PRODUCT-SERVICE
+                        predicates:
+                          - Path=/products/**,/categories/**,/brands/**
                         filters:
                           - StripPrefix=0
 eureka:
@@ -66,6 +58,8 @@ secure:
           - /druid/**
           - /auth/login
           - /auth/register
+          - /categories
+          - /brands
 logging:
     level:
         org.springframework.cloud.gateway: DEBUG

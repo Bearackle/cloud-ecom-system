@@ -22,7 +22,4 @@ public class Brand {
 
     @Column(name = "avt_img_url", length = 300)
     private String avtImgUrl;
-
-    @OneToMany(mappedBy = "brand", fetch = FetchType.LAZY)
-    private List<Product> products;
 }

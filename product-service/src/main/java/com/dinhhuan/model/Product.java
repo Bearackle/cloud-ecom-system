@@ -20,9 +20,9 @@ public class Product {
 
     @Column(name = "product_name", nullable = false, length = 200)
     private String productName;
-
+    @Column(name = "price")
     private Long price;
-
+    @Column(name = "active")
     private Integer active;
 
     @ManyToOne(fetch = FetchType.LAZY)

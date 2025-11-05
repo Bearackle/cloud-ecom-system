@@ -1,5 +1,6 @@
 package com.dinhhuan.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,13 +20,13 @@ public class Category {
     @Column(name = "category_name", length = 200)
     private String categoryName;
 
+    @Column(name = "img_url", length = 300)
+    private String imgUrl;
+
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
     private Category parent;
-
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Category> children;
-
-    @Column(name = "img_url", length = 300)
-    private String imgUrl;
 }
