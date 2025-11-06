@@ -1,6 +1,7 @@
 package com.dinhhuan.service;
 
 import com.dinhhuan.dto.BrandCreation;
+import com.dinhhuan.dto.BrandSimpleDto;
 import com.dinhhuan.model.Brand;
 
 import java.util.List;

@@ -1,13 +1,17 @@
 package com.dinhhuan.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import lombok.*;
 
 
-public interface CategorySimpleDto {
-     Long id();
-     String categoryName();
-     String imgUrl();
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+public class CategorySimpleDto {
+     @JsonSerialize(using = ToStringSerializer.class)
+     private Long id;
+     private String categoryName;
+     private String imgUrl;
 }

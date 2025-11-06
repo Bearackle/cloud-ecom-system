@@ -11,6 +11,6 @@ import java.util.List;
 public interface CategoryRepository extends JpaRepository<Category, Long> {
     @EntityGraph(attributePaths = {"children"})
     List<Category> findByParentIsNull();
-    @Query("SELECT c from Category c")
+    @Query("SELECT new com.dinhhuan.dto.CategorySimpleDto(c.id, c.categoryName, c.imgUrl) FROM Category c")
     List<CategorySimpleDto> findAllCategories();
 }

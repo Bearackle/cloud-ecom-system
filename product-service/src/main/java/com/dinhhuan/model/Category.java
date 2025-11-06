@@ -22,7 +22,6 @@ public class Category {
 
     @Column(name = "img_url", length = 300)
     private String imgUrl;
-
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")

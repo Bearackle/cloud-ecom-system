@@ -1,6 +1,7 @@
 package com.dinhhuan.controller;
 
 import com.dinhhuan.dto.BrandCreation;
+import com.dinhhuan.dto.BrandSimpleDto;
 import com.dinhhuan.dto.CategoryCreation;
 import com.dinhhuan.model.Brand;
 import com.dinhhuan.model.Category;

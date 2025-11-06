@@ -60,6 +60,7 @@ secure:
           - /auth/register
           - /categories
           - /brands
+          - /products
 logging:
     level:
         org.springframework.cloud.gateway: DEBUG

@@ -1,17 +1,17 @@
 package com.dinhhuan.service.impl;
 
 import com.baidu.fsg.uid.impl.DefaultUidGenerator;
-import com.dinhhuan.dto.ProductAttributeCreation;
-import com.dinhhuan.dto.ProductDetailCreation;
-import com.dinhhuan.dto.ProductFilterModel;
-import com.dinhhuan.dto.ProductImage;
+import com.dinhhuan.dto.*;
 import com.dinhhuan.model.*;
 import com.dinhhuan.repository.ProductImageRepository;
 import com.dinhhuan.repository.ProductRepository;
 import com.dinhhuan.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -30,6 +30,7 @@ public class ProductServiceImpl implements ProductService {
         product.setBrand(Brand.builder().id(productCreation.getBrandId()).build());
         product.setDescription(productCreation.getDescription());
         //attr
+        product.setAttributes(new ArrayList<>());
         for(int i = 0 ; i < productCreation.getAttributes().size(); i++){
             ProductAttributeCreation attr = productCreation.getAttributes().get(i);
             product.getAttributes().add(Attribute.builder().id(uidGenerator.getUID()).attributeName(attr.getAttributeName())
@@ -38,6 +39,7 @@ public class ProductServiceImpl implements ProductService {
                     .build());
         }
         //image
+        product.setImages(new ArrayList<>());
         for(int i = 0 ; i < productCreation.getImages().size(); i++) {
             ProductImage img = productCreation.getImages().get(i);
             product.getImages().add(Image.builder().id(uidGenerator.getUID()).product(product)
@@ -73,5 +75,16 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<Product> search(String keyword, ProductFilterModel filter) {
         return List.of();
+    }
+
+    @Override
+    public Page<ProductSimpleDto> getListProudct(Pageable pageable) {
+        return productRepository.findAll(pageable)
+                .map(p -> ProductSimpleDto.builder()
+                        .id(p.getId())
+                        .productName(p.getProductName())
+                        .price(p.getPrice())
+                        .imageUrl(p.getImages().getFirst().getImgUrls())
+                        .build());
     }
 }
