@@ -2,6 +2,7 @@ package com.dinhhuan.service.impl;
 
 import com.baidu.fsg.uid.impl.DefaultUidGenerator;
 import com.dinhhuan.dto.*;
+import com.dinhhuan.dto.mapper.ProductMapper;
 import com.dinhhuan.model.*;
 import com.dinhhuan.repository.ProductImageRepository;
 import com.dinhhuan.repository.ProductRepository;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -50,16 +52,37 @@ public class ProductServiceImpl implements ProductService {
         return product.getId();
     }
     @Override
-    public Product getProductById(Long id) {
-        return productRepository.findById(id).orElse(null);
+    public ProductDto getProductById(Long id) {
+        var p =  productRepository.findById(id)
+                .orElse(null);
+        if(p == null){
+            return null;
+        }
+        return ProductDto.builder()
+                .id(p.getId())
+                .productName(p.getProductName())
+                .price(p.getPrice())
+                .brandId(p.getBrand().getId())
+                .categoryId(p.getCategory().getId())
+                .description(p.getDescription())
+                .attributes(p.getAttributes()
+                                .stream().map(attr -> AttributeDto.builder()
+                                .id(attr.getId())
+                                .attributeName(attr.getAttributeName())
+                                .attributeValue(attr.getAttributeValue())
+                                .build())
+                        .toList())
+                .images(p.getImages().stream().map(
+                        img -> ImageDto.builder()
+                                .id(img.getId())
+                                .imgUrls(img.getImgUrls())
+                                .build())
+                        .toList())
+                .build();
     }
     @Override
     public List<Product> getProducts() {
         return productRepository.findAll();
-    }
-    @Override
-    public void updateProduct(Product product) {
-        //wait for it
     }
 
     @Override
@@ -86,5 +109,48 @@ public class ProductServiceImpl implements ProductService {
                         .price(p.getPrice())
                         .imageUrl(p.getImages().getFirst().getImgUrls())
                         .build());
+    }
+
+    @Override
+    public ProductDto updateProduct(Long id,ProductDetailEdit productEdit) {
+        Product product = productRepository.findById(id).orElse(null);
+        if(product == null) {
+            return null;
+        }
+        product.setProductName(productEdit.getProductName());
+        product.setPrice(productEdit.getPrice());
+        product.setCategory(Category.builder()
+                .id(productEdit.getCategoryId()).build());
+        product.setBrand(Brand.builder().id(productEdit.getBrandId()).build());
+        product.setDescription(productEdit.getDescription());
+
+        if(productEdit.getAttributes() != null) {
+            product.getAttributes().clear();
+            product.getAttributes().addAll(
+                    productEdit.getAttributes()
+                            .stream().map(
+                                    attr -> Attribute.builder()
+                                            .id(attr.getId())
+                                            .product(product)
+                                            .attributeName(attr.getAttributeName())
+                                            .attributeValue(attr.getAttributeValue())
+                                            .build()
+                            ).toList()
+            );
+        }
+        if(productEdit.getImages() != null) {
+            product.getImages().clear();
+            product.getImages().addAll(
+                    productEdit.getImages()
+                            .stream()
+                            .map(img -> Image.builder()
+                                    .id(img.getId())
+                                    .imgUrls(img.getImgUrls())
+                                    .product(product)
+                                    .build()
+                            ).toList());
+        }
+        productRepository.save(product);
+        return getProductById(id);
     }
 }

@@ -1,7 +1,10 @@
 package com.dinhhuan.controller;
 
 import com.dinhhuan.dto.ProductDetailCreation;
+import com.dinhhuan.dto.ProductDetailEdit;
+import com.dinhhuan.dto.ProductDto;
 import com.dinhhuan.dto.ProductSimpleDto;
+import com.dinhhuan.dto.mapper.ProductMapper;
 import com.dinhhuan.model.Product;
 import com.dinhhuan.service.ProductService;
 import lombok.AllArgsConstructor;
@@ -55,5 +58,26 @@ public class ProductController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>(Map.of("id", id), HttpStatus.CREATED);
+    }
+    @RequestMapping(value = "/{id}" , method = RequestMethod.GET)
+    public ResponseEntity<ProductDto> get (@PathVariable Long id) {
+        var product = productService.getProductById(id);
+        if(product == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return ResponseEntity.ok(product);
+    }
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    public ResponseEntity<ProductDto> updateProduct(@PathVariable Long id, @RequestBody ProductDetailEdit productDetailEdit) {
+         var product = productService.updateProduct(id, productDetailEdit);
+         if(product == null) {
+             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+         }
+         return ResponseEntity.ok(product);
+    }
+    @RequestMapping(value="/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<Map<String, String>> delete (@PathVariable Long id) {
+        productService.deleteProductById(id);
+        return ResponseEntity.ok(Map.of("id", String.valueOf(id)));
     }
 }
