@@ -153,4 +153,13 @@ public class ProductServiceImpl implements ProductService {
         productRepository.save(product);
         return getProductById(id);
     }
+    public List<ProductRef> getProductRefs() {
+        return productRepository.findAll()
+                .stream()
+                .map(p -> ProductRef.builder()
+                        .id(p.getId())
+                        .productName(p.getProductName())
+                        .build())
+                .toList();
+    }
 }

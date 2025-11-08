@@ -16,4 +16,5 @@ public interface ProductService {
     List<Product> search(String keyword, ProductFilterModel filter);
     Page<ProductSimpleDto> getListProudct(Pageable pageable);
     ProductDto updateProduct(Long id, ProductDetailEdit productEdit);
+    List<ProductRef> getProductRefs();
 }

@@ -1,9 +1,6 @@
 package com.dinhhuan.controller;
 
-import com.dinhhuan.dto.ProductDetailCreation;
-import com.dinhhuan.dto.ProductDetailEdit;
-import com.dinhhuan.dto.ProductDto;
-import com.dinhhuan.dto.ProductSimpleDto;
+import com.dinhhuan.dto.*;
 import com.dinhhuan.dto.mapper.ProductMapper;
 import com.dinhhuan.model.Product;
 import com.dinhhuan.service.ProductService;
@@ -79,5 +76,13 @@ public class ProductController {
     public ResponseEntity<Map<String, String>> delete (@PathVariable Long id) {
         productService.deleteProductById(id);
         return ResponseEntity.ok(Map.of("id", String.valueOf(id)));
+    }
+    @RequestMapping(value="/ref", method = RequestMethod.GET)
+    public ResponseEntity<List<ProductRef>> getProductRef() {
+        var productRef = productService.getProductRefs();
+        if(productRef == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return ResponseEntity.ok(productRef);
     }
 }
