@@ -7,6 +7,8 @@ import com.dinhhuan.model.Category;
 import com.dinhhuan.repository.CategoryRepository;
 import com.dinhhuan.service.CategoryService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,8 +32,14 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryRepository.save(cat).getId();
     }
     @Override
-    public Category getCategory(Long id) {
-        return categoryRepository.findById(id).orElse(null);
+    public CategorySimpleDto getCategory(Long id) {
+        return categoryRepository.findById(id)
+                        .map(cat -> CategorySimpleDto.builder()
+                                .id(cat.getId())
+                                .categoryName(cat.getCategoryName())
+                                .imgUrl(cat.getImgUrl())
+                                .build())
+                                .orElse(null);
     }
 
     @Override

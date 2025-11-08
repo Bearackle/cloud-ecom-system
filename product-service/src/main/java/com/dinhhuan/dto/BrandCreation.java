@@ -7,8 +7,6 @@ import lombok.RequiredArgsConstructor;
 
 @Builder
 @Data
-@RequiredArgsConstructor
-@AllArgsConstructor
 public class BrandCreation {
     private String brandName;
     private String avtImgUrl;

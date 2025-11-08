@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.*;
 
 
+@Builder
 @Getter
 @Setter
 @AllArgsConstructor

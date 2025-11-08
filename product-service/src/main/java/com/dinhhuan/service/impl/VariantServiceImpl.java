@@ -37,7 +37,9 @@ public class VariantServiceImpl implements VariantService {
                 .id(v.getId())
                 .variantName(v.getProductVariantName())
                 .quantity(v.getQuantity())
-                .imgUrl(v.getImgUrl()).build())
+                .imgUrl(v.getImgUrl())
+                        .productId(v.getProduct().getId())
+                        .build())
                 .toList();
     }
     @Override
@@ -49,6 +51,7 @@ public class VariantServiceImpl implements VariantService {
         pv.setProductVariantName(variantDto.getVariantName());
         pv.setQuantity(variantDto.getQuantity());
         pv.setImgUrl(variantDto.getImgUrl());
+        pv.setProduct(Product.builder().id(variantDto.getProductId()).build());
         productVariantRepository.save(pv);
         return findVariantById(variantId);
     }
@@ -68,6 +71,7 @@ public class VariantServiceImpl implements VariantService {
                 .variantName(pv.getProductVariantName())
                 .quantity(pv.getQuantity())
                 .imgUrl(pv.getImgUrl())
+                .productId(pv.getProduct().getId())
                 .build();
     }
 
@@ -78,6 +82,7 @@ public class VariantServiceImpl implements VariantService {
                         .id(p.getId())
                         .variantName(p.getProductVariantName())
                         .quantity(p.getQuantity())
+                        .productId(p.getProduct().getId())
                         .imgUrl(p.getImgUrl()).build());
     }
 }

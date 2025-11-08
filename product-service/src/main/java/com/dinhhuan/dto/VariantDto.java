@@ -11,6 +11,8 @@ public class VariantDto {
     @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
     private String variantName;
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long productId;
     private Integer quantity;
     private String imgUrl;
 }
