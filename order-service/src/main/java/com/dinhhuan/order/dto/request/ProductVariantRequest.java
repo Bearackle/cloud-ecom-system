@@ -6,8 +6,7 @@ import lombok.experimental.FieldDefaults;
 
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
-
 public class ProductVariantRequest {
-    Long productId;
     String name;
+    String imgUrl;
 }

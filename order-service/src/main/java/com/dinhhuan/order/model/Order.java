@@ -1,16 +1,19 @@
 package com.dinhhuan.order.model;
 
+import com.dinhhuan.order.enums.OrderStatus;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
 
 @Entity
 @Getter @Setter
-@NoArgsConstructor @AllArgsConstructor
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Table(name = "orders")
@@ -22,18 +25,28 @@ public class Order {
     @Column(name = "user_id", nullable = false)
     Long userId;
 
-    @Column(name = "order_date", nullable = false)
-    LocalDateTime orderDate = LocalDateTime.now();
+    @Column(name = "total_amount", nullable = false, precision = 12, scale = 2)
+    BigDecimal totalAmount;
 
-    @Column(name = "total_amount", nullable = false)
-    Float totalAmount;
-
-    @Column(columnDefinition = "MEDIUMTEXT")
+    @Column(columnDefinition = "TEXT")
     String note;
 
-    @Column(nullable = false)
-    Integer status = 0;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, columnDefinition = "order_status")
+    @Builder.Default
+    OrderStatus status = OrderStatus.PENDING;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Column(name = "order_date", nullable = false)
+    @Builder.Default
+    LocalDateTime orderDate = LocalDateTime.now();
+
+    @Column(name = "created_at", nullable = false)
+    @Builder.Default
+    LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column(name = "updated_at")
+    LocalDateTime updatedAt;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     List<Item> items;
 }

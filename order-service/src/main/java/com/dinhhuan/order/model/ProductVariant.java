@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
@@ -15,9 +17,16 @@ public class ProductVariant {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @Column(name = "product_id", nullable = false)
-    Long productId;
-
-    @Column(nullable = false)
+    @Column(nullable = false, length = 200)
     String name;
+
+    @Column(name = "img_url", length = 500)
+    String imgUrl;
+
+    @Column(name = "created_at", nullable = false)
+    @Builder.Default
+    LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column(name = "updated_at")
+    LocalDateTime updatedAt;
 }

@@ -4,24 +4,22 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.math.BigDecimal;
-import java.util.List;
-
-
 @Entity
 @Getter @Setter
-@NoArgsConstructor @AllArgsConstructor
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Table(name = "item")
-public class Item {
+@Table(name = "cart_items",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "product_variant_id"}))
+public class CartItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id", nullable = false)
-    Order order;
+    @JoinColumn(name = "user_id", nullable = false)
+    User user;
 
     @Column(name = "product_variant_id", nullable = false)
     Long productVariantId;
@@ -30,6 +28,7 @@ public class Item {
     @Builder.Default
     Integer quantity = 1;
 
-    @Column(name = "price")
-    private Long price;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "product_variant_id", insertable = false, updatable = false)
+    ProductVariant productVariant;
 }
