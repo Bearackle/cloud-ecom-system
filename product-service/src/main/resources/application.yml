@@ -35,3 +35,8 @@ logging:
         org.hibernate.engine.jdbc.spi: DEBUG
         org.hibernate.type.descriptor.sql: TRACE
         org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentImpl: TRACE
+azure:
+    storage:
+        account-name: ${STORAGE_ACCOUNT_NAME}
+        account-key: ${STORAGE_ACCOUNT_KEY}
+        container-name: ${STORAGE_CONTAINER_NAME}

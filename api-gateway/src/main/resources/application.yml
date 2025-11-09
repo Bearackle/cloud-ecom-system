@@ -27,7 +27,7 @@ spring:
                       - id: product-service
                         uri: lb://PRODUCT-SERVICE
                         predicates:
-                          - Path=/products/**,/categories/**,/brands/**,/variants/**
+                          - Path=/products/**,/categories/**,/brands/**,/variants/**,/images/**
                         filters:
                           - StripPrefix=0
 eureka:
