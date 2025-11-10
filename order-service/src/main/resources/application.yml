@@ -21,3 +21,20 @@ spring:
         url: jdbc:postgresql://localhost:5432/order_db
         user: order-service
         password: order-service-01
+    cloud:
+        function:
+            definition: consumerRegistration
+        azure:
+            servicebus:
+                connection-string: ${CONNECTION_QUEUE_STRING}
+        stream:
+            bindings:
+                consumerRegistration-in-0:
+                    destination: user-auth
+            servicebus:
+                bindings:
+                    consumerRegistration-in-0:
+                        consumer:
+                            auto-complete: true
+                            max-concurrent-calls: 5
+                            prefetch-count: 10
