@@ -2,16 +2,22 @@ server:
   port: 8081
 
 spring:
-  datasource:
-    url: jdbc:mysql://localhost:3306/order_db?useSSL=false&serverTimezone=UTC
-    username: root
-    password: root
-    driver-class-name: com.mysql.cj.jdbc.Driver
-
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
+    application:
+        name: order-service
+    datasource:
+        url: jdbc:postgresql://localhost:5432/order_db
+        username: order-service
+        password: order-service-01
+        driver-class-name: org.postgresql.Driver
+    jpa:
+        hibernate:
+            ddl-auto: update
+        show-sql: true
+        properties:
+            hibernate:
+                format_sql: true
+    flyway:
+        locations: classpath:db/migration
+        url: jdbc:postgresql://localhost:5432/order_db
+        user: order-service
+        password: order-service-01
