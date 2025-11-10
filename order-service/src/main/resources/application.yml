@@ -21,3 +21,26 @@ spring:
         url: jdbc:postgresql://localhost:5432/order_db
         user: order-service
         password: order-service-01
+    cloud:
+
+        discovery:
+
+          enabled: false
+
+    eureka:
+
+      client:
+
+        enabled: false
+
+        register-with-eureka: false
+
+        fetch-registry: false
+
+    logging:
+
+      level:
+
+        com.netflix.discovery: WARN
+
+        org.springframework.cloud.netflix.eureka: WARN
