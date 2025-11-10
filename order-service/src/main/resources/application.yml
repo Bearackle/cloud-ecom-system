@@ -22,25 +22,19 @@ spring:
         user: order-service
         password: order-service-01
     cloud:
-
-        discovery:
-
-          enabled: false
-
-    eureka:
-
-      client:
-
-        enabled: false
-
-        register-with-eureka: false
-
-        fetch-registry: false
-
-    logging:
-
-      level:
-
-        com.netflix.discovery: WARN
-
-        org.springframework.cloud.netflix.eureka: WARN
+        function:
+            definition: consumerRegistration
+        azure:
+            servicebus:
+                connection-string: ${CONNECTION_QUEUE_STRING}
+        stream:
+            bindings:
+                consumerRegistration-in-0:
+                    destination: user-auth
+            servicebus:
+                bindings:
+                    consumerRegistration-in-0:
+                        consumer:
+                            auto-complete: true
+                            max-concurrent-calls: 5
+                            prefetch-count: 10
