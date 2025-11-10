@@ -9,6 +9,6 @@ import org.springframework.context.annotation.Configuration;
 @Slf4j
 @RequiredArgsConstructor
 public class ConsumerVariantHandler {
-    private final VariantService variantService;
+//    private final VariantService variantService;
 
 }
