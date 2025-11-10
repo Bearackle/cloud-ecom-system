@@ -30,6 +30,7 @@ public class Item {
     @Builder.Default
     Integer quantity = 1;
 
-    @Column(name = "price")
-    private Long price;
+    @Column(name = "price", precision = 12, scale = 2)
+    BigDecimal price;
+
 }

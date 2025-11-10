@@ -24,6 +24,10 @@ public class ProductVariantServiceImpl implements ProductVariantService {
 
     @Override
     public ProductVariantResponse createProductVariant(ProductVariantRequest request) {
+        if (productVariantRepository.existsByName(request.getName())) {
+            throw new AppEx("Product variant already exists with name: " + request.getName(),
+                    HttpStatus.CONFLICT);
+        }
         ProductVariant productVariant = productVariantMapper.toEntity(request);
         LocalDateTime now = LocalDateTime.now();
         productVariant.setCreatedAt(now);
