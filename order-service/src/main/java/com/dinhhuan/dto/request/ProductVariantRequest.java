@@ -1,13 +1,16 @@
 package com.dinhhuan.dto.request;
 
-import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import lombok.experimental.FieldDefaults;
+import lombok.NoArgsConstructor;
 
 @Data
-@FieldDefaults(level = AccessLevel.PRIVATE)
-
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class ProductVariantRequest {
-    Long productId;
-    String name;
+    private String name;
+    private String imgUrl;
 }
+

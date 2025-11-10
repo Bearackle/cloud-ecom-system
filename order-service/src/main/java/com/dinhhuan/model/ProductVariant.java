@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.time.LocalDateTime;
 
 @Entity
 @Getter @Setter
@@ -15,8 +14,8 @@ import java.time.LocalDateTime;
 public class ProductVariant {
     @Id
     Long id;
-    @Column(nullable = false, length = 200)
+    @Column(name = "variant_name", nullable = false, length = 200)
     String name;
-    @Column(name = "img_url", length = 500)
+    @Column(name = "img_url", length = 400)
     String imgUrl;
 }

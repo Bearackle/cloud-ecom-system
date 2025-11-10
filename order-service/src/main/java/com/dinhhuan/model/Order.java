@@ -26,6 +26,10 @@ public class Order {
     @JoinColumn(name = "user_id", nullable = false)
     User user;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "address_id", nullable = false)
+    Address address;
+
     @Column(name = "order_date", nullable = false)
     @Builder.Default
     LocalDateTime orderDate = LocalDateTime.now();

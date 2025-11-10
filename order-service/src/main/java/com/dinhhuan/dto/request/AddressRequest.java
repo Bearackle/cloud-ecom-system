@@ -9,9 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ItemRequest {
-    private Long variantId;
-    private Integer quantity;
-    private Long price;
+public class AddressRequest {
+    private Long userId;
+    private String location;
 }
 

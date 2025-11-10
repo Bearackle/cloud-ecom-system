@@ -1,16 +1,16 @@
 package com.dinhhuan.common;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
-@AllArgsConstructor
+
 @Getter
 @Setter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Data<T>{
     private long code;
     private T data;
     private String message;
 }
+
