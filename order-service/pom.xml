@@ -12,7 +12,7 @@
     <artifactId>order-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>order-service</name>
-    <description>Order Service</description>
+    <description>order-service</description>
 
     <properties>
         <java.version>21</java.version>
@@ -31,6 +31,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.dinhhuan</groupId>
+            <artifactId>order-service</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
