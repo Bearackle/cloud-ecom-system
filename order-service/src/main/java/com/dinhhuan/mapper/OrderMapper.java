@@ -1,8 +1,8 @@
-package com.dinhhuan.order.mapper;
+package com.dinhhuan.mapper;
 
-import com.dinhhuan.order.dto.request.OrderRequest;
-import com.dinhhuan.order.dto.response.OrderResponse;
-import com.dinhhuan.order.model.Order;
+import com.dinhhuan.dto.request.OrderRequest;
+import com.dinhhuan.dto.response.OrderResponse;
+import com.dinhhuan.model.Order;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")

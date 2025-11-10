@@ -1,4 +1,4 @@
-package com.dinhhuan.order.common;
+package com.dinhhuan.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

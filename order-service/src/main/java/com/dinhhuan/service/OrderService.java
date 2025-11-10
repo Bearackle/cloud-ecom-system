@@ -1,7 +1,7 @@
-package com.dinhhuan.order.service;
+package com.dinhhuan.service;
 
-import com.dinhhuan.order.dto.request.OrderRequest;
-import com.dinhhuan.order.dto.response.OrderResponse;
+import com.dinhhuan.dto.request.OrderRequest;
+import com.dinhhuan.dto.response.OrderResponse;
 
 import java.util.List;
 

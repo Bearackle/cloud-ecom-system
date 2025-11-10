@@ -1,4 +1,4 @@
-package com.dinhhuan.order.dto.request;
+package com.dinhhuan.dto.request;
 
 import lombok.AccessLevel;
 import lombok.Data;

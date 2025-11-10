@@ -1,4 +1,4 @@
-package com.dinhhuan.order.model;
+package com.dinhhuan.model;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;

@@ -1,6 +1,6 @@
-package com.dinhhuan.order.repository;
+package com.dinhhuan.repository;
 
-import com.dinhhuan.order.model.Item;
+import com.dinhhuan.model.Item;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ItemRepository extends JpaRepository<Item, Long> {

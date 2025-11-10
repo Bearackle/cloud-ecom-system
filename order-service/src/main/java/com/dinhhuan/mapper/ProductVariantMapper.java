@@ -1,7 +1,7 @@
-package com.dinhhuan.order.mapper;
+package com.dinhhuan.mapper;
 
-import com.dinhhuan.order.dto.response.ProductVariantResponse;
-import com.dinhhuan.order.model.ProductVariant;
+import com.dinhhuan.dto.response.ProductVariantResponse;
+import com.dinhhuan.model.ProductVariant;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")

@@ -1,17 +1,21 @@
-package com.dinhhuan.order.dto.request;
+package com.dinhhuan.dto.response;
 
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 
-public class OrderRequest {
+public class OrderResponse {
+    Long id;
     Long userId;
-    List<ItemRequest> items;
+    LocalDateTime orderDate;
     Float totalAmount;
     String note;
+    Integer status;
+    List<ItemResponse> items;
 }

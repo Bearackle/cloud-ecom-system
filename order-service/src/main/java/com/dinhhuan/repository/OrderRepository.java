@@ -1,6 +1,6 @@
-package com.dinhhuan.order.repository;
+package com.dinhhuan.repository;
 
-import com.dinhhuan.order.model.Order;
+import com.dinhhuan.model.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 

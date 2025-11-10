@@ -1,10 +1,8 @@
-package com.dinhhuan.order.model;
+package com.dinhhuan.model;
 
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.List;
 
 
 @Entity
