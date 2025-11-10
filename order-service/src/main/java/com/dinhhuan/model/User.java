@@ -1,7 +1,5 @@
-package com.dinhhuan.order.model;
+package com.dinhhuan.model;
 
-import com.dinhhuan.model.CartItem;
-import com.dinhhuan.model.Order;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;

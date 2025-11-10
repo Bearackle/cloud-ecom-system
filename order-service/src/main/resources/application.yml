@@ -1,5 +1,5 @@
 server:
-  port: 8081
+  port: 8306
 
 spring:
     application:
@@ -11,7 +11,7 @@ spring:
         driver-class-name: org.postgresql.Driver
     jpa:
         hibernate:
-            ddl-auto: update
+            ddl-auto: validate
         show-sql: true
         properties:
             hibernate:

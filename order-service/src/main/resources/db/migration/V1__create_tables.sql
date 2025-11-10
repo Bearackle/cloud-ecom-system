@@ -10,6 +10,12 @@ CREATE TABLE product_variants(
                                  img_url VARCHAR(400),
                                  PRIMARY KEY (id)
 );
+CREATE TABLE addresses (
+                           id BIGINT NOT NULL,
+                           user_id BIGINT NOT NULL,
+                           address VARCHAR(200) NOT NULL,
+                           PRIMARY KEY (id)
+);
 CREATE TABLE cart_items(
                                  id BIGINT,
                                  user_id BIGINT,
@@ -21,6 +27,7 @@ CREATE TABLE orders(
                        id BIGINT,
                        user_id BIGINT,
                        order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                       address_id BIGINT,
                        total_amount BIGINT,
                        note VARCHAR(500),
                        status INT,
@@ -34,10 +41,11 @@ CREATE TABLE items (
         price BIGINT,
         PRIMARY KEY (id)
 );
-
+alter table if exists addresses add constraint fk_add_usr foreign key(user_id) references users(id);
 alter table if exists cart_items add constraint fk_cart_usr foreign key (user_id) references users(id);
 alter table if exists cart_items add constraint fk_cart_var foreign key(variant_id) references product_variants(id);
 alter table if exists orders add constraint fk_ord_usr foreign key(user_id) references users(id);
+alter table if exists orders add constraint fk_ord_add foreign key(address_id) references addresses(id);
 alter table if exists items add constraint fk_it_ord foreign key (order_id) references orders(id);
-alter table if exists items add constraint fk_it_ foreign key (variant_id) references product_variants(id);
+alter table if exists items add constraint fk_it_var foreign key (variant_id) references product_variants(id);
 

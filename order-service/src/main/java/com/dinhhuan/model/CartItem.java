@@ -14,15 +14,11 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 
 public class CartItem {
-
     @Id
     private Long id;
 
     @Column(name = "user_id", nullable = false)
     private Long userId;
-
-    @Column(name = "product_variant_id", nullable = false)
-    Long productVariantId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "variant_id", nullable = false)
