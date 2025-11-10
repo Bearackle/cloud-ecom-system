@@ -1,14 +1,24 @@
 package com.dinhhuan.dto.response;
 
-import lombok.AccessLevel;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import lombok.experimental.FieldDefaults;
+import lombok.NoArgsConstructor;
 
 @Data
-@FieldDefaults(level = AccessLevel.PRIVATE)
-
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class ItemResponse {
-    Long id;
-    Long quantity;
-    Float price;
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long id;
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long orderId;
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long variantId;
+    private Integer quantity;
+    private Long price;
 }
+

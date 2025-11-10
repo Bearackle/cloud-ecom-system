@@ -9,9 +9,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ItemRequest {
+public class CartItemRequest {
+    private Long userId;
     private Long variantId;
     private Integer quantity;
-    private Long price;
 }
 

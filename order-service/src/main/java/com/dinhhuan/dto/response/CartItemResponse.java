@@ -7,24 +7,17 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderResponse {
+public class CartItemResponse {
     @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
     @JsonSerialize(using = ToStringSerializer.class)
     private Long userId;
     @JsonSerialize(using = ToStringSerializer.class)
-    private Long addressId;
-    private LocalDateTime orderDate;
-    private Long totalAmount;
-    private String note;
-    private Integer status;
-    private List<ItemResponse> items;
+    private Long variantId;
+    private Integer quantity;
 }
 

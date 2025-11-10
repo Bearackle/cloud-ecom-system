@@ -1,14 +1,20 @@
 package com.dinhhuan.dto.response;
 
-import lombok.AccessLevel;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import lombok.experimental.FieldDefaults;
+import lombok.NoArgsConstructor;
 
 @Data
-@FieldDefaults(level = AccessLevel.PRIVATE)
-
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class ProductVariantResponse {
-    Long id;
-    Long productId;
-    String name;
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long id;
+    private String name;
+    private String imgUrl;
 }
+

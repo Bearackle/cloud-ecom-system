@@ -1,17 +1,22 @@
 package com.dinhhuan.dto.request;
 
-import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import lombok.experimental.FieldDefaults;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Data
-@FieldDefaults(level = AccessLevel.PRIVATE)
-
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class OrderRequest {
-    Long userId;
-    List<ItemRequest> items;
-    Float totalAmount;
-    String note;
+    private Long userId;
+    private Long addressId;
+    private Long totalAmount;
+    private String note;
+    private Integer status;
+    private List<ItemRequest> items;
 }
+
