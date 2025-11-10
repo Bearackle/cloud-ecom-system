@@ -61,7 +61,10 @@ public class VariantServiceImpl implements VariantService {
         pv.setImgUrl(variantDto.getImgUrl());
         pv.setProduct(Product.builder().id(variantDto.getProductId()).build());
         productVariantRepository.save(pv);
-        return findVariantById(variantId);
+        //send event
+        var vr = findVariantById(variantId);
+        event.sendMessage(vr);
+        return vr;
     }
 
     @Override
