@@ -19,10 +19,11 @@ public class VariantServiceImpl implements VariantService {
                 new ProductVariant()
         );
         if(entity.getId() == null){
-            entity.setId(uid.getUID());
+            entity.setId(variantCreation.getId());
         }
         entity.setName(variantCreation.getVariantName());
         entity.setImgUrl(variantCreation.getImgUrl());
+        entity.setPrice(variantCreation.getPrice());
         variantRepository.save(entity);
         return entity.getId();
     }

@@ -13,6 +13,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public List<OrderResponse> getAllUserOrders(Long userId) {
+        return List.of();
+    }
+
+    @Override
     public List<OrderResponse> getAll() {
         return List.of();
     }

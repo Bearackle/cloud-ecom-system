@@ -7,6 +7,7 @@ import com.dinhhuan.commons.auth.UserRegistrationDto;
 import com.dinhhuan.dto.ProductDto;
 import com.dinhhuan.dto.VariantCreation;
 import com.dinhhuan.dto.VariantDto;
+import com.dinhhuan.dto.VariantSyncDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,7 @@ public class VariantCreationEvent {
                 .buildClient();
         this.objectMapper = objectMapper;
     }
-    public void sendMessage(VariantDto user) {
+    public void sendMessage(VariantSyncDto user) {
         try{
             String messageBody = objectMapper.writeValueAsString(user);
             ServiceBusMessage message = new ServiceBusMessage(messageBody);
