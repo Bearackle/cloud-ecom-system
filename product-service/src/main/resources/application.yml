@@ -16,6 +16,10 @@ spring:
         url: jdbc:postgresql://localhost:5432/product_db
         user: product-service
         password: product-service-01
+    cloud:
+        azure:
+            servicebus:
+                connection-string: ${CONNECTION_TOPIC_STRING}
 
 eureka:
     client:

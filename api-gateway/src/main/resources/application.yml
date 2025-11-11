@@ -15,7 +15,7 @@ spring:
                       - id: user-service
                         uri: lb://USER-SERVICE
                         predicates:
-                          - Path=/user/**
+                          - Path=/user/**,/address/**
                         filters:
                           - StripPrefix=0
                       - id: auth-service
@@ -28,6 +28,12 @@ spring:
                         uri: lb://PRODUCT-SERVICE
                         predicates:
                           - Path=/products/**,/categories/**,/brands/**,/variants/**,/images/**
+                        filters:
+                          - StripPrefix=0
+                      - id: order-service
+                        uri: lb://ORDER-SERVICE
+                        predicates:
+                          - Path=/cart/**,/orders/**
                         filters:
                           - StripPrefix=0
 eureka:

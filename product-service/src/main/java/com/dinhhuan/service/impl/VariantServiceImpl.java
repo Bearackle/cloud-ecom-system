@@ -5,6 +5,7 @@ import com.dinhhuan.dto.VariantCreation;
 import com.dinhhuan.dto.VariantDto;
 import com.dinhhuan.model.Product;
 import com.dinhhuan.model.ProductVariant;
+import com.dinhhuan.producer.VariantCreationEvent;
 import com.dinhhuan.repository.ProductVariantRepository;
 import com.dinhhuan.service.VariantService;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ import java.util.List;
 public class VariantServiceImpl implements VariantService {
     private final ProductVariantRepository productVariantRepository;
     private final DefaultUidGenerator uid;
+    private final VariantCreationEvent event;
     @Override
     public Long createVariant(VariantCreation variantCreation) {
         ProductVariant variant = new ProductVariant();
@@ -28,6 +30,12 @@ public class VariantServiceImpl implements VariantService {
         variant.setImgUrl(variantCreation.getImgUrl());
         variant.setProduct(Product.builder().id(variantCreation.getProductId()).build());
         productVariantRepository.save(variant);
+        //send event create variant
+        event.sendMessage(VariantDto.builder()
+                .id(variant.getId())
+                .variantName(variant.getProductVariantName())
+                .imgUrl(variant.getImgUrl())
+                .build());
         return variant.getId();
     }
     @Override
@@ -53,7 +61,10 @@ public class VariantServiceImpl implements VariantService {
         pv.setImgUrl(variantDto.getImgUrl());
         pv.setProduct(Product.builder().id(variantDto.getProductId()).build());
         productVariantRepository.save(pv);
-        return findVariantById(variantId);
+        //send event
+        var vr = findVariantById(variantId);
+        event.sendMessage(vr);
+        return vr;
     }
 
     @Override

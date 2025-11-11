@@ -1,17 +1,65 @@
 server:
-  port: 8081
+  port: 8306
 
 spring:
-  datasource:
-    url: jdbc:mysql://localhost:3306/order_db?useSSL=false&serverTimezone=UTC
-    username: root
-    password: root
-    driver-class-name: com.mysql.cj.jdbc.Driver
-
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
+    application:
+        name: order-service
+    datasource:
+        url: jdbc:postgresql://localhost:5432/order_db
+        username: order-service
+        password: order-service-01
+        driver-class-name: org.postgresql.Driver
+    jpa:
+        hibernate:
+            ddl-auto: validate
+        show-sql: true
+        properties:
+            hibernate:
+                format_sql: true
+    flyway:
+        locations: classpath:db/migration
+        url: jdbc:postgresql://localhost:5432/order_db
+        user: order-service
+        password: order-service-01
+    cloud:
+        function:
+            definition: consumerRegistration;consumerVariant;consumerAddress
+        azure:
+            servicebus:
+                connection-string: ${CONNECTION_TOPIC_STRING}
+        stream:
+            bindings:
+                consumerRegistration-in-0:
+                    destination: user-topic
+                    group: order-service-sub
+                consumerVariant-in-0:
+                    destination: variant-topic
+                    group: order-service-sub
+                consumerAddress-in-0:
+                    destination: address-topic
+                    group: order-service-sub
+            servicebus:
+                bindings:
+                    consumerRegistration-in-0:
+                        consumer:
+                            auto-complete: true
+                            max-concurrent-calls: 5
+                            prefetch-count: 10
+                    consumerVariant-in-0:
+                        consumer:
+                            auto-complete: true
+                            max-concurrent-calls: 5
+                            prefetch-count: 10
+                    consumerAddress-in-0:
+                        consumer:
+                            auto-complete: true
+                            max-concurrent-calls: 5
+                            prefetch-count: 10
+eureka:
+    client:
+        service-url:
+            defaultZone: http://localhost:8301/eureka
+        fetch-registry: true
+        register-with-eureka: true
+    instance:
+        hostname: localhost

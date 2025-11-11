@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     private final UserService userService;
     @GetMapping(path = "/info")
-    public ResponseEntity<Data<UserInfoResponse>> getUserInfo(@RequestHeader("X-User-Id") String userId) {
-        Data<UserInfoResponse> response = Data.<UserInfoResponse>builder().code(HttpStatus.OK.value()).message("success").data(userService.getUserInfo(Long.parseLong(userId))).build();
+    public ResponseEntity<UserInfoResponse> getUserInfo(@RequestHeader("X-User-Id") String userId) {
+        var response = userService.getUserInfo(Long.parseLong(userId));
         return ResponseEntity.ok(response);
     }
     @PostMapping("/")
