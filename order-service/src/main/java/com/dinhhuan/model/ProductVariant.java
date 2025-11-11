@@ -18,4 +18,6 @@ public class ProductVariant {
     String name;
     @Column(name = "img_url", length = 400)
     String imgUrl;
+    @Column(name = "price")
+    Long price;
 }
