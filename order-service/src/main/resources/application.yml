@@ -23,7 +23,7 @@ spring:
         password: order-service-01
     cloud:
         function:
-            definition: consumerRegistration;consumerVariant
+            definition: consumerRegistration;consumerVariant;consumerAddress
         azure:
             servicebus:
                 connection-string: ${CONNECTION_TOPIC_STRING}
@@ -35,6 +35,9 @@ spring:
                 consumerVariant-in-0:
                     destination: variant-topic
                     group: order-service-sub
+                consumerAddress-in-0:
+                    destination: address-topic
+                    group: order-service-sub
             servicebus:
                 bindings:
                     consumerRegistration-in-0:
@@ -43,6 +46,11 @@ spring:
                             max-concurrent-calls: 5
                             prefetch-count: 10
                     consumerVariant-in-0:
+                        consumer:
+                            auto-complete: true
+                            max-concurrent-calls: 5
+                            prefetch-count: 10
+                    consumerAddress-in-0:
                         consumer:
                             auto-complete: true
                             max-concurrent-calls: 5

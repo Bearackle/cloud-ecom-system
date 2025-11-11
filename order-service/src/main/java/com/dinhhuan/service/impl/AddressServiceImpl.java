@@ -75,14 +75,15 @@ public class AddressServiceImpl implements AddressService {
         addressRepository.deleteById(id);
     }
 
+    //internal
     @Override
     public Long createOrUpdate(AddressSyncDto addressSyncDto) {
-        var address = addressRepository.findById(addressSyncDto.getId()).orElse(new Address());
-        if(address.getId() == null){
-            address.setId(uidGenerator.getUID());
-        }
-        address.setUser(findUser(addressSyncDto.getUserId()));
-        address.setLocation(address.getLocation());
+        var address = addressRepository.findById(addressSyncDto.getId())
+                .orElse(Address.builder().id(addressSyncDto.getId())
+                        .user(User.builder()
+                                .id(addressSyncDto.getUserId()).build())
+                        .location(addressSyncDto.getLocation())
+                        .build());
         return addressRepository.save(address).getId();
     }
 

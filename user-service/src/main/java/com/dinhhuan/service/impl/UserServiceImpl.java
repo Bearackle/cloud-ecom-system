@@ -21,7 +21,13 @@ public class UserServiceImpl implements UserService {
         public UserInfoResponse getUserInfo(Long userId) {
         log.info("getUserInfo {}", userId);
         User user = userRepository.findById(userId).orElseThrow(() -> new AppEx("User not found", HttpStatus.NOT_FOUND));
-        return UserMapper.INSTANCE.toUserInfoDto(user);
+        return UserInfoResponse.builder()
+                .id(user.getId())
+                .fullName(user.getFullName())
+                .email(user.getEmail())
+                .phoneNumber(user.getPhoneNumber())
+                .language(user.getLanguage())
+                .build();
     }
     @Override
     public void createUser(UserCreationRequest user) {
