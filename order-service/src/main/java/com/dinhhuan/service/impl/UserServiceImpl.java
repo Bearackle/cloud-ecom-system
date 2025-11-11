@@ -15,31 +15,15 @@ public class UserServiceImpl implements UserService {
     private final DefaultUidGenerator uid;
     private final UserRepository userRepository;
     @Override
-    public Long createUser(UserRegistrationDto user) {
-        User newUser = new User();
-        newUser.setId(uid.getUID());
-        newUser.setEmail(user.getEmail());
-        newUser.setPhone(user.getPhoneNumber());
-        userRepository.save(newUser);
-        return newUser.getId();
-    }
-    @Override
-    public void updateUser(User user) {
-        User updateUser = userRepository.findById(user.getId()).orElse(null);
-        if(updateUser == null){
-            return;
+    public Long createOrUpdate(UserRegistrationDto user) {
+        User targetUser = userRepository.findById(user.getId()).orElse(null);
+        if(targetUser == null){
+            targetUser = new User();
+            targetUser.setId(uid.getUID());
         }
-        updateUser.setEmail(user.getEmail());
-        updateUser.setPhone(user.getPhone());
-        userRepository.save(updateUser);
-    }
-    @Override
-    public User getUserById(Long id) {
-        return userRepository.findById(id).orElse(null);
-    }
-
-    @Override
-    public void deleteUserById(Long id) {
-        userRepository.deleteById(id);
+        targetUser.setEmail(user.getEmail());
+        targetUser.setPhone(user.getPhoneNumber());
+        userRepository.save(targetUser);
+        return targetUser.getId();
     }
 }

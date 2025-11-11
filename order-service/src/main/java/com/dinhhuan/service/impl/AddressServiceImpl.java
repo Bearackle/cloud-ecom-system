@@ -3,6 +3,7 @@ package com.dinhhuan.service.impl;
 import com.baidu.fsg.uid.impl.DefaultUidGenerator;
 import com.dinhhuan.common.AppEx;
 import com.dinhhuan.dto.request.AddressRequest;
+import com.dinhhuan.dto.request.AddressSyncDto;
 import com.dinhhuan.dto.response.AddressResponse;
 import com.dinhhuan.model.Address;
 import com.dinhhuan.model.User;
@@ -72,6 +73,17 @@ public class AddressServiceImpl implements AddressService {
     @Transactional
     public void deleteAddress(Long id) {
         addressRepository.deleteById(id);
+    }
+
+    @Override
+    public Long createOrUpdate(AddressSyncDto addressSyncDto) {
+        var address = addressRepository.findById(addressSyncDto.getId()).orElse(new Address());
+        if(address.getId() == null){
+            address.setId(uidGenerator.getUID());
+        }
+        address.setUser(findUser(addressSyncDto.getUserId()));
+        address.setLocation(address.getLocation());
+        return addressRepository.save(address).getId();
     }
 
     private Address findAddress(Long id) {
