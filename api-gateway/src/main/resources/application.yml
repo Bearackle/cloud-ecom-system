@@ -30,6 +30,12 @@ spring:
                           - Path=/products/**,/categories/**,/brands/**,/variants/**,/images/**
                         filters:
                           - StripPrefix=0
+                      - id: order-service
+                        uri: lb://ORDER-SERVICE
+                        predicates:
+                          - Path=/cart/**,/orders/**
+                        filters:
+                          - StripPrefix=0
 eureka:
     client:
         service-url:

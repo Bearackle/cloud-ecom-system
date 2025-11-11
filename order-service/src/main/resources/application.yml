@@ -31,6 +31,8 @@ spring:
             bindings:
                 consumerRegistration-in-0:
                     destination: user-auth
+                consumerVariant-in-0:
+                    destination: variant-product
             servicebus:
                 bindings:
                     consumerRegistration-in-0:
@@ -38,3 +40,16 @@ spring:
                             auto-complete: true
                             max-concurrent-calls: 5
                             prefetch-count: 10
+                    consumerVariant-in-0:
+                        consumer:
+                            auto-complete: true
+                            max-concurrent-calls: 5
+                            prefetch-count: 10
+eureka:
+    client:
+        service-url:
+            defaultZone: http://localhost:8301/eureka
+        fetch-registry: true
+        register-with-eureka: true
+    instance:
+        hostname: localhost

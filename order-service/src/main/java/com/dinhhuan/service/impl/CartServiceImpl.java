@@ -2,6 +2,7 @@ package com.dinhhuan.service.impl;
 
 import com.baidu.fsg.uid.impl.DefaultUidGenerator;
 import com.dinhhuan.common.AppEx;
+import com.dinhhuan.dto.request.CartItemRequest;
 import com.dinhhuan.dto.response.CartItemDto;
 import com.dinhhuan.model.CartItem;
 import com.dinhhuan.model.ProductVariant;
@@ -24,29 +25,22 @@ public class CartServiceImpl implements CartService {
     private final DefaultUidGenerator uidGenerator;
 
     @Override
-    @Transactional
-    public Long addItemToCart(Long userId, Long variantId) {
-        User user = findUser(userId);
-
-        CartItem existingCartItem = cartItemRepository
-                .findByUserIdAndVariantId(userId, variantId)
-                .orElse(null);
-
-        if (existingCartItem != null) {
-            existingCartItem.setQuantity(existingCartItem.getQuantity() + 1);
-            cartItemRepository.save(existingCartItem);
-            return existingCartItem.getId();
-        } else {
-            CartItem cartItem = CartItem.builder()
-                    .id(uidGenerator.getUID())
-                    .user(user)
-                    .variant(ProductVariant.builder().id(variantId).build())
-                    .quantity(1)
-                    .build();
-            return cartItemRepository.save(cartItem).getId();
-        }
+    public Long addItemToCart(CartItemRequest cartItem) {
+        var item = cartItemRepository.findByUserIdAndVariantId(cartItem.getUserId(), cartItem.getVariantId())
+                .orElse(CartItem.builder().id(uidGenerator.getUID())
+                        .build());
+            item.setUser(User.builder().id(cartItem.getUserId()).build());
+            item.setVariant(ProductVariant.builder().id(cartItem.getVariantId()).build());
+            if (cartItem.getQuantity() == null) {
+                if(item.getQuantity() == null) {
+                    cartItem.setQuantity(1);
+                } else
+                    cartItem.setQuantity(item.getQuantity()+1);
+            }
+            item.setQuantity(cartItem.getQuantity());
+            cartItemRepository.save(item);
+            return item.getId();
     }
-
     @Override
     @Transactional
     public Long removeItemFromCart(Long cartItemId) {
@@ -84,6 +78,13 @@ public class CartServiceImpl implements CartService {
                 .filter(item -> item.getQuantity() > 0)
                 .map(this::toDto)
                 .toList();
+    }
+
+    @Override
+    public void updateQuantity(Long cartItemId, Integer quantity) {
+        var item = findCartItem(cartItemId);
+        item.setQuantity(quantity);
+        cartItemRepository.save(item);
     }
 
     private User findUser(Long id) {

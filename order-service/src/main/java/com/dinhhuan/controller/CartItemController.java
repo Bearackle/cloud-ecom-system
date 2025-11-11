@@ -1,6 +1,8 @@
 package com.dinhhuan.controller;
 
+import com.dinhhuan.dto.request.CartItemRequest;
 import com.dinhhuan.dto.response.CartItemDto;
+import com.dinhhuan.model.CartItem;
 import com.dinhhuan.service.CartService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,10 +19,11 @@ import java.util.Map;
 public class CartItemController {
     private final CartService cartService;
 
-    @RequestMapping(value = "/{userId}/add/{variantId}", method = RequestMethod.POST)
-    public ResponseEntity<?> addItemToCart(@PathVariable Long userId, @PathVariable Long variantId) {
+    @RequestMapping(value = "", method = RequestMethod.POST)
+    public ResponseEntity<?> addItemToCart(@RequestHeader("X-User-Id") String userId, @RequestBody CartItemRequest cartItem) {
+        cartItem.setUserId(Long.parseLong(userId));
         try {
-            Long id = cartService.addItemToCart(userId, variantId);
+            Long id = cartService.addItemToCart(cartItem);
             if (id == null) {
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
@@ -29,7 +32,11 @@ public class CartItemController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
-
+    @RequestMapping(value = "", method =  RequestMethod.PUT)
+    public ResponseEntity<?> updateItem(@RequestBody CartItemDto cartItem) {
+         cartService.updateQuantity(cartItem.getId(), cartItem.getQuantity());
+         return new ResponseEntity<>(Map.of("id", cartItem.getId()), HttpStatus.OK);
+    }
     @RequestMapping(value = "/{cartItemId}", method = RequestMethod.DELETE)
     public ResponseEntity<?> removeItemFromCart(@PathVariable Long cartItemId) {
         try {
@@ -62,26 +69,12 @@ public class CartItemController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
-
-    @RequestMapping(value = "/{userId}", method = RequestMethod.GET)
-    public ResponseEntity<?> getCartItems(@PathVariable Long userId) {
-        try {
-            List<CartItemDto> items = cartService.getCartItems(userId);
-            if (items == null) {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
-            List<Map<String, Object>> data = items.stream()
-                    .map(dto -> {
-                        Map<String, Object> map = new HashMap<>();
-                        map.put("id", dto.getId());
-                        map.put("variantId", dto.getVariantId());
-                        map.put("quantity", dto.getQuantity());
-                        return map;
-                    })
-                    .toList();
-            return ResponseEntity.ok(data);
-        } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public ResponseEntity<?> getCartItems(@RequestHeader("X-User-Id") String userId) {
+        List<CartItemDto> items = cartService.getCartItems(Long.parseLong(userId));
+        if (items == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        return ResponseEntity.ok(items);
     }
 }
