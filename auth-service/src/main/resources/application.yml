@@ -22,8 +22,7 @@ spring:
     cloud:
         azure:
             servicebus:
-                connection-string: ${CONNECTION_QUEUE_STRING}
-                queue: user-auth
+                connection-string: ${CONNECTION_TOPIC_STRING}
 eureka:
     client:
         service-url:

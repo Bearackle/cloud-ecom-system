@@ -21,11 +21,12 @@ spring:
             definition: consumerRegistration
         azure:
             servicebus:
-                connection-string: ${CONNECTION_QUEUE_STRING}
+                connection-string: ${CONNECTION_TOPIC_STRING}
         stream:
             bindings:
                 consumerRegistration-in-0:
-                    destination: user-auth
+                    destination: user-topic
+                    group: user-service-sub
             servicebus:
                 bindings:
                     consumerRegistration-in-0:

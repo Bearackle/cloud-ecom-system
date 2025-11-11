@@ -1,5 +1,6 @@
 package com.dinhhuan.auth.producer;
 
+import com.azure.messaging.servicebus.ServiceBusClientBuilder;
 import com.azure.messaging.servicebus.ServiceBusMessage;
 import com.azure.messaging.servicebus.ServiceBusSenderClient;
 import com.dinhhuan.commons.auth.UserRegistrationDto;
@@ -10,11 +11,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 @Component
-@RequiredArgsConstructor
 @Slf4j
 public class UserCreationProducer {
-    private final ServiceBusSenderClient senderClient;
+    private final ServiceBusSenderClient  senderClient;
     private final ObjectMapper objectMapper;
+    public UserCreationProducer(ServiceBusClientBuilder builder, ObjectMapper objectMapper) {
+        this.senderClient = builder
+                .sender()
+                .topicName("user-topic")
+                .buildClient();
+        this.objectMapper = objectMapper;
+    }
     public void sendMessage(UserRegistrationDto user) {
         try{
             String messageBody = objectMapper.writeValueAsString(user);

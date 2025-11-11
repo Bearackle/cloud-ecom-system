@@ -19,8 +19,7 @@ spring:
     cloud:
         azure:
             servicebus:
-                connection-string: ${CONNECTION_QUEUE_STRING}
-                queue: variant-product
+                connection-string: ${CONNECTION_TOPIC_STRING}
 
 eureka:
     client:
