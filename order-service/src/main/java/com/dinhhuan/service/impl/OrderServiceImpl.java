@@ -56,7 +56,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderResponse getOrderById(Long id) {
-        Order order = orderRepository.findOrder(id);
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new AppEx("Order not found: " + id, HttpStatus.NOT_FOUND));
         return toDto(order);
     }
 
@@ -78,7 +79,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderResponse changeStatus(Long id, Integer status) {
-        Order order = orderRepository.findOrder(id);
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new AppEx("Order not found: " + id, HttpStatus.NOT_FOUND));
         order.setStatus(status);
         Order savedOrder = orderRepository.save(order);
         return toDto(savedOrder);
