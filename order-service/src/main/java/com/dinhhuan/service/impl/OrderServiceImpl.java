@@ -10,13 +10,16 @@ import com.dinhhuan.repository.CartItemRepository;
 import com.dinhhuan.repository.OrderRepository;
 import com.dinhhuan.repository.VariantRepository;
 import com.dinhhuan.service.OrderService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -62,6 +65,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public List<OrderResponse> getAllUserOrder(Long userId) {
         List<Order> orders = orderRepository.findAllByUserId(userId);
         return orders.stream()
@@ -70,13 +74,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderResponse> getAllOrders() {
-        List<Order> orders = orderRepository.findAll();
-        return orders.stream()
-                .map(this::toDto)
-                .toList();
+    public Page<OrderResponse> getAllOrders(Pageable pageable) {
+       Page<Order> orders = orderRepository.findAll(pageable);
+        return orders
+                .map(this::toDto);
     }
-
     @Override
     public OrderResponse changeStatus(Long id, Integer status) {
         Order order = orderRepository.findById(id)
@@ -96,9 +98,8 @@ public class OrderServiceImpl implements OrderService {
 
             ProductVariant variant = variantRepository.findById(cartItem.getVariant().getId()).orElse(null);
             if (variant == null) continue;
-
+            variant.setPrice(variant.getPrice() == null ? 0 : variant.getPrice());
             Long itemPrice = variant.getPrice() * cartItem.getQuantity();
-
             Item item = Item.builder()
                     .id(uidGenerator.getUID())
                     .order(order)
@@ -109,7 +110,6 @@ public class OrderServiceImpl implements OrderService {
 
             items.add(item);
         }
-
         return items;
     }
 
