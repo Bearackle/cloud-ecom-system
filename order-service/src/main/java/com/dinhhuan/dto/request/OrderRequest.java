@@ -18,5 +18,6 @@ public class OrderRequest {
     private String note;
     private Integer status;
     private List<ItemRequest> items;
+    private Integer method;
 }
 

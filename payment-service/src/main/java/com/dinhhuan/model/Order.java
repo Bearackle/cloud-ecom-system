@@ -19,7 +19,7 @@ public class Order {
     @Id
     Long id;
     @Column(name = "user_id")
-    Long user_id;
+    Long userId;
     @Column(name = "total_amount", nullable = false)
     Long totalAmount;
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)

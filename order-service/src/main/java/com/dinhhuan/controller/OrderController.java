@@ -26,11 +26,11 @@ public class OrderController {
     @RequestMapping(name = "", method = RequestMethod.POST)
     public ResponseEntity<Map<String,String>> create(@RequestHeader("X-User-Id") String userId, @RequestBody OrderRequest request){
         request.setUserId(Long.parseLong(userId));
-       Long id =  orderService.createOrder(request);
-       if(id == null) {
+       String url =  orderService.createOrder(request);
+       if(url == null) {
            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
        }
-       return ResponseEntity.ok(Map.of("id", String.valueOf(id)));
+       return ResponseEntity.ok(Map.of("payUrl", url));
     }
     @RequestMapping(name = "", method = RequestMethod.GET)
     public ResponseEntity<List<OrderResponse>> getAllOrders(

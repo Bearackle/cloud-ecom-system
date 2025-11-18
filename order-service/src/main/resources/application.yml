@@ -63,3 +63,7 @@ eureka:
         register-with-eureka: true
     instance:
         hostname: localhost
+
+payment:
+    service:
+        url: http://localhost:8307

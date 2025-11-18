@@ -2,14 +2,18 @@ package com.dinhhuan.service.impl;
 
 import com.baidu.fsg.uid.impl.DefaultUidGenerator;
 import com.dinhhuan.common.AppEx;
+import com.dinhhuan.dto.request.CreateOrderDto;
 import com.dinhhuan.dto.request.OrderRequest;
+import com.dinhhuan.dto.request.PaymentRequest;
 import com.dinhhuan.dto.response.ItemResponse;
 import com.dinhhuan.dto.response.OrderResponse;
 import com.dinhhuan.model.*;
+import com.dinhhuan.producer.CreateOrderEvent;
 import com.dinhhuan.repository.CartItemRepository;
 import com.dinhhuan.repository.OrderRepository;
 import com.dinhhuan.repository.VariantRepository;
 import com.dinhhuan.service.OrderService;
+import com.dinhhuan.service.PaymentClient;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -28,9 +32,10 @@ public class OrderServiceImpl implements OrderService {
     private final CartItemRepository cartItemRepository;
     private final VariantRepository variantRepository;
     private final DefaultUidGenerator uidGenerator;
-
+    private final CreateOrderEvent createOrderEvent;
+    private final PaymentClient paymentClient;
     @Override
-    public Long createOrder(OrderRequest orderRequest) {
+    public String createOrder(OrderRequest orderRequest) {
         List<CartItem> cartItems = cartItemRepository.findByUserId(orderRequest.getUserId());
         Order order = Order.builder()
                 .id(uidGenerator.getUID())
@@ -49,14 +54,17 @@ public class OrderServiceImpl implements OrderService {
             totalAmount = calculateTotalAmountFromItems(items);
         }
         order.setTotalAmount(totalAmount);
-
         Order savedOrder = orderRepository.save(order);
-
-//        cartItemRepository.deleteAll(cartItems);
-
-        return savedOrder.getId();
+        createOrderEvent.sendMessage(CreateOrderDto.builder()
+                        .orderId(savedOrder.getId())
+                        .totalAmount(savedOrder.getTotalAmount())
+                        .method(orderRequest.getMethod())
+                .build());
+        return paymentClient.generatePaymentUrl(PaymentRequest.builder()
+                .orderId(savedOrder.getId())
+                .amount(savedOrder.getTotalAmount())
+                .build()).getUrl();
     }
-
     @Override
     public OrderResponse getOrderById(Long id) {
         Order order = orderRepository.findById(id)

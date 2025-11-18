@@ -1,49 +1,55 @@
 server:
-  port: 8307
+    port: 8307
 
 spring:
-  application:
-    name: payment-service
-  datasource:
-    url: jdbc:postgresql://localhost:5432/payment_db
-    username: payment-service
-    password: payment-service-01
-    driver-class-name: org.postgresql.Driver
-  jpa:
-    hibernate:
-      ddl-auto: validate
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
-  flyway:
-    locations: classpath:db/migration
-    url: jdbc:postgresql://localhost:5432/payment_db
-    user: payment-service
-    password: payment-service
-  cloud:
-    function:
-      definition: consumerCreatedOrder
-    azure:
-      servicebus:
-        connection-string: ${CONNECTION_TOPIC_STRING}
-    stream:
-      bindings:
-        consumerCreatedOrder-in-0:
-          destination: order-saga
-          group: payment-service-sub
-      servicebus:
-        bindings:
-          consumerCreatedOrder-in-0:
-            consumer:
-              auto-complete: true
-              max-concurrent-calls: 5
-              prefetch-count: 10
+    application:
+        name: payment-service
+    datasource:
+        url: jdbc:postgresql://localhost:5432/payment_db
+        username: payment-service
+        password: payment-service-01
+        driver-class-name: org.postgresql.Driver
+    jpa:
+        hibernate:
+            ddl-auto: validate
+        show-sql: true
+        properties:
+            hibernate:
+                format_sql: true
+    flyway:
+        locations: classpath:db/migration
+        url: jdbc:postgresql://localhost:5432/payment_db
+        user: payment-service
+        password: payment-service-01
+    cloud:
+        function:
+            definition: consumerCreatedOrder
+        azure:
+            servicebus:
+                connection-string: ${CONNECTION_TOPIC_STRING}
+        stream:
+            bindings:
+                consumerCreatedOrder-in-0:
+                    destination: order-saga
+                    group: payment-sub
+            servicebus:
+                bindings:
+                    consumerCreatedOrder-in-0:
+                        consumer:
+                            auto-complete: true
+                            max-concurrent-calls: 5
+                            prefetch-count: 10
 eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8301/eureka
-    fetch-registry: true
-    register-with-eureka: true
-  instance:
-    hostname: localhost
+    client:
+        service-url:
+            defaultZone: http://localhost:8301/eureka
+        fetch-registry: true
+        register-with-eureka: true
+    instance:
+        hostname: localhost
+
+vnpay:
+    tmnCode: ${TMN_CODE}
+    hashSecret: ${HASH_SECRET}
+    payUrl: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
+    returnUrl: http://localhost:8303/payments/return

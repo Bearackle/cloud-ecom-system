@@ -8,7 +8,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface OrderService {
-    Long createOrder(OrderRequest orderRequest);
+    String createOrder(OrderRequest orderRequest);
     OrderResponse getOrderById(Long id);
     List<OrderResponse> getAllUserOrder(Long userId);
     Page<OrderResponse> getAllOrders(Pageable pageable);

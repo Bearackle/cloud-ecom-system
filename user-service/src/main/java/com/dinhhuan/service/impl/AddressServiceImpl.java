@@ -38,7 +38,6 @@ public class AddressServiceImpl implements AddressService {
     public void update(Long id , AddressDto address) {
         var addressEntity = addressRepository.findById(id).orElse(null);
         if(addressEntity != null){
-            addressEntity.setUser(User.builder().id(address.getId()).build());
             addressEntity.setAddress(address.getLocation());
             addressRepository.save(addressEntity);
             addressChangeEvent.sendMessage(AddressSyncDto.builder().id(address.getId())

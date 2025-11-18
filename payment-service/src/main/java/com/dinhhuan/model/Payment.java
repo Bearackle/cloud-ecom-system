@@ -1,5 +1,7 @@
 package com.dinhhuan.model;
 
+import com.dinhhuan.dto.enums.PaymentMethod;
+import com.dinhhuan.dto.enums.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,5 +21,11 @@ public class Payment {
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
     @Column(name = "created_date", nullable = false)
-    LocalDateTime createdDate;
+    private LocalDateTime createdDate;
+    @Column(name = "status")
+    @Enumerated(EnumType.ORDINAL)
+    private PaymentStatus status;
+    @Column(name = "method")
+    @Enumerated(EnumType.ORDINAL)
+    private PaymentMethod method;
 }

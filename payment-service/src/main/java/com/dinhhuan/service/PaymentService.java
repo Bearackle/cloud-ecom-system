@@ -10,4 +10,6 @@ public interface PaymentService {
     Long updateStatus(Long id, PaymentDto payment);
     List<PaymentDto> getAllUserPayments(Long userId);
     List<PaymentDto> getAllPayments();
+    String getPaymentUrl(Long orderId, Long amount);
+    PaymentDto getPayment(Long orderId);
 }
