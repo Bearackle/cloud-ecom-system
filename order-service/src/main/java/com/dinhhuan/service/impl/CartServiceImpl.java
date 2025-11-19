@@ -81,10 +81,12 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public void updateQuantity(Long cartItemId, Integer quantity) {
-        var item = findCartItem(cartItemId);
+    public Long updateQuantity(Long cartItemId, Integer quantity) {
+        var item = cartItemRepository.findById(cartItemId).orElse(null);
+        if(item == null)
+            return null;
         item.setQuantity(quantity);
-        cartItemRepository.save(item);
+        return cartItemRepository.save(item).getId();
     }
 
     private User findUser(Long id) {

@@ -20,7 +20,8 @@ public class ConsumerOrderCreatedHandler {
         return order -> {
             paymentService.createPayment(PaymentCreation.builder()
                     .orderId(order.getOrderId())
-                    .method(PaymentMethod.values()[order.getMethod()])
+                    .method(order.getMethod())
+                            .userId(order.getUserId())
                             .totalAmount(order.getTotalAmount())
             .build());
         };

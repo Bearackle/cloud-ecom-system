@@ -3,6 +3,7 @@ package com.dinhhuan.controller;
 import com.dinhhuan.dto.request.OrderRequest;
 import com.dinhhuan.dto.request.OrderStatusRequest;
 import com.dinhhuan.dto.response.OrderResponse;
+import com.dinhhuan.dto.response.OrderResponseDetails;
 import com.dinhhuan.service.OrderService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -74,8 +75,8 @@ public class OrderController {
          return new ResponseEntity<>(order, HttpStatus.OK);
     }
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseEntity<OrderResponse> getOrder(@PathVariable Long id){
-        var order = orderService.getOrderById(id);
+    public ResponseEntity<OrderResponseDetails> getOrder(@PathVariable Long id){
+        var order = orderService.getOrderByIdIncluded(id);
         if (order == null) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }

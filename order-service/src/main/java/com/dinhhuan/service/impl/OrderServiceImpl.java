@@ -5,8 +5,11 @@ import com.dinhhuan.common.AppEx;
 import com.dinhhuan.dto.request.CreateOrderDto;
 import com.dinhhuan.dto.request.OrderRequest;
 import com.dinhhuan.dto.request.PaymentRequest;
+import com.dinhhuan.dto.response.ItemInventoryDto;
 import com.dinhhuan.dto.response.ItemResponse;
 import com.dinhhuan.dto.response.OrderResponse;
+import com.dinhhuan.dto.response.OrderResponseDetails;
+import com.dinhhuan.enums.OrderStatus;
 import com.dinhhuan.model.*;
 import com.dinhhuan.producer.CreateOrderEvent;
 import com.dinhhuan.repository.CartItemRepository;
@@ -57,8 +60,16 @@ public class OrderServiceImpl implements OrderService {
         Order savedOrder = orderRepository.save(order);
         createOrderEvent.sendMessage(CreateOrderDto.builder()
                         .orderId(savedOrder.getId())
+                        .userId(orderRequest.getUserId())
                         .totalAmount(savedOrder.getTotalAmount())
                         .method(orderRequest.getMethod())
+                        .items(order.getItems().stream().map(
+                                it -> ItemInventoryDto.builder()
+                                        .variantId(it.getVariant().getId())
+                                        .quantity(it.getQuantity())
+                                        .build()
+                            ).toList()
+                        )
                 .build());
         return paymentClient.generatePaymentUrl(PaymentRequest.builder()
                 .orderId(savedOrder.getId())
@@ -94,6 +105,33 @@ public class OrderServiceImpl implements OrderService {
         order.setStatus(status);
         Order savedOrder = orderRepository.save(order);
         return toDto(savedOrder);
+    }
+
+    @Override
+    public OrderResponseDetails getOrderByIdIncluded(Long id) {
+        Order order = orderRepository.findOrderDetailsIncluded(id).orElse(null);
+        if(order == null) {
+            return null;
+        }
+        return OrderResponseDetails.builder()
+                .id(order.getId())
+                .location(order.getAddress().getLocation())
+                .email(order.getUser().getEmail())
+                .phone(order.getUser().getPhone())
+                .orderDate(order.getOrderDate())
+                .totalAmount(order.getTotalAmount())
+                .note(order.getNote())
+                .status(OrderStatus.fromCode(order.getStatus()))
+                .items(order.getItems().stream()
+                        .map(i -> ItemResponse.builder()
+                                .id(i.getId())
+                                .price(i.getPrice())
+                                .quantity(i.getQuantity())
+                                .variantId(i.getVariant().getId())
+                                .orderId(order.getId())
+                                .build())
+                        .toList()
+                ).build();
     }
 
     private List<Item> convertCartItemsToItems(Order order, List<CartItem> cartItems) {

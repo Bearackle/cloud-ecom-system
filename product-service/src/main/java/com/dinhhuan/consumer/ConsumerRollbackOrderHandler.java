@@ -10,16 +10,10 @@ import java.util.function.Consumer;
 
 @Component
 @RequiredArgsConstructor
-public class ConsumerOrderCreatedHandler {
+public class ConsumerRollbackOrderHandler {
     private final InventoryService service;
     @Bean
-    public Consumer<CreateOrderDto> consumerCreatedOrder() {
-        return order -> {
-            try {
-                service.proceedOrder(order);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        };
+    public Consumer<Long> consumerRollbackOrder() {
+        return service::rollbackOrder;
     }
 }

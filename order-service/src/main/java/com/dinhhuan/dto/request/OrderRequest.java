@@ -1,5 +1,6 @@
 package com.dinhhuan.dto.request;
 
+import com.dinhhuan.dto.PaymentMethod;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,6 +19,6 @@ public class OrderRequest {
     private String note;
     private Integer status;
     private List<ItemRequest> items;
-    private Integer method;
+    private PaymentMethod method;
 }
 

@@ -1,5 +1,6 @@
 package com.dinhhuan.dto.response;
 
+import com.dinhhuan.enums.OrderStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -16,19 +17,18 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderResponse {
+public class OrderResponseDetails {
     @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
     @JsonSerialize(using = ToStringSerializer.class)
-    private Long userId;
-    @JsonSerialize(using = ToStringSerializer.class)
-    private Long addressId;
+    private String location;
+    private String email;
+    private String phone;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime orderDate;
     private Long totalAmount;
     private String note;
-    private Integer status;
+    private OrderStatus status;
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private List<ItemResponse> items;
 }
-

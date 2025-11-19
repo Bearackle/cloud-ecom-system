@@ -31,6 +31,11 @@
 			<optional>true</optional>
 		</dependency>
 		<dependency>
+			<groupId>com.azure.spring</groupId>
+			<artifactId>spring-cloud-azure-stream-binder-servicebus</artifactId>
+			<version>5.16.0</version>
+		</dependency>
+		<dependency>
 			<groupId>com.dinhhuan</groupId>
 			<artifactId>commons</artifactId>
 			<version>0.0.1-SNAPSHOT</version>

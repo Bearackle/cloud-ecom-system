@@ -33,7 +33,7 @@ spring:
                       - id: order-service
                         uri: lb://ORDER-SERVICE
                         predicates:
-                          - Path=/cart/**,/orders/**,
+                          - Path=/cart/**,/orders/**
                         filters:
                           - StripPrefix=0
                       - id: payment-service
@@ -73,7 +73,7 @@ secure:
           - /categories
           - /brands
           - /products
-          - /payments/return
+          - /payments/return-callback
 logging:
     level:
         org.springframework.cloud.gateway: DEBUG

@@ -20,9 +20,9 @@ public class PaymentSuccessProducer {
                 .buildClient();
         this.objectMapper = objectMapper;
     }
-    public void sendMessage() {
+    public void sendMessage(Long orderId) {
         try{
-            String messageBody = objectMapper.writeValueAsString("SuccessPayment");
+            String messageBody = objectMapper.writeValueAsString(orderId);
             ServiceBusMessage message = new ServiceBusMessage(messageBody);
             message.getApplicationProperties().put("eventType", "PaymentSuccess");
             message.getApplicationProperties().put("sagaStep", "WAITING_INVENTORY");

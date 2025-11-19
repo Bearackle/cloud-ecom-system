@@ -1,8 +1,10 @@
-package com.dinhhuan.dto.request;
+package com.dinhhuan.dto;
 
-import com.dinhhuan.dto.PaymentMethod;
-import com.dinhhuan.dto.response.ItemInventoryDto;
-import lombok.*;
+import com.dinhhuan.dto.ItemInventoryDto;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
@@ -12,8 +14,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CreateOrderDto {
     private Long orderId;
-    private Long userId;
-    private PaymentMethod method;
     private Long totalAmount;
     List<ItemInventoryDto> items;
 }

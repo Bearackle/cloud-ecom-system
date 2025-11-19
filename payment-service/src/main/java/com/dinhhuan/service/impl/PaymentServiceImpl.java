@@ -3,6 +3,7 @@ package com.dinhhuan.service.impl;
 import com.baidu.fsg.uid.impl.DefaultUidGenerator;
 import com.dinhhuan.dto.PaymentCreation;
 import com.dinhhuan.dto.PaymentDto;
+import com.dinhhuan.dto.enums.PaymentStatus;
 import com.dinhhuan.model.Order;
 import com.dinhhuan.model.Payment;
 import com.dinhhuan.repository.OrderRepository;
@@ -11,6 +12,9 @@ import com.dinhhuan.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,6 +36,9 @@ public class PaymentServiceImpl implements PaymentService {
         Payment payment = Payment.builder()
                         .id(uid.getUID())
                         .order(order)
+                .method(creation.getMethod())
+                .createdDate(LocalDateTime.now())
+                .status(PaymentStatus.PENDING)
                 .build();
         paymentRepository.save(payment);
         return payment.getId();
@@ -52,7 +59,7 @@ public class PaymentServiceImpl implements PaymentService {
         return ls.stream().map(
                 p -> PaymentDto.builder()
                         .method(p.getMethod())
-                        .createdDate(p.getCreatedDate().toLocalDate())
+                        .createdDate(p.getCreatedDate())
                         .status(p.getStatus())
                         .id(p.getId())
                         .build())
@@ -64,17 +71,17 @@ public class PaymentServiceImpl implements PaymentService {
         return payls.stream().map(
                         p -> PaymentDto.builder()
                                 .method(p.getMethod())
-                                .createdDate(p.getCreatedDate().toLocalDate())
+                                .createdDate(p.getCreatedDate())
                                 .status(p.getStatus())
                                 .id(p.getId())
                                 .build())
-                .collect(Collectors.toList());
+                .toList();
     }
     @Override
     public String getPaymentUrl(Long orderId, Long amount) {
         String url;
         try {
-            url = vnPayService.createOrder(amount.intValue(), "nothing","");
+            url = vnPayService.createOrder(amount.intValue(), String.valueOf(orderId),"");
         } catch (Exception e) {
             url =  null;
         }
@@ -91,7 +98,7 @@ public class PaymentServiceImpl implements PaymentService {
         return PaymentDto.builder().id(payment.getId())
                 .status(payment.getStatus())
                 .method(payment.getMethod())
-                .createdDate(payment.getCreatedDate().toLocalDate())
+                .createdDate(payment.getCreatedDate())
                 .build();
     }
 }

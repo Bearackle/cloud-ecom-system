@@ -31,7 +31,7 @@ spring:
             bindings:
                 consumerCreatedOrder-in-0:
                     destination: order-saga
-                    group: payment-sub
+                    group: sub-order-created
             servicebus:
                 bindings:
                     consumerCreatedOrder-in-0:
@@ -52,4 +52,4 @@ vnpay:
     tmnCode: ${TMN_CODE}
     hashSecret: ${HASH_SECRET}
     payUrl: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
-    returnUrl: http://localhost:8303/payments/return
+    returnUrl: http://localhost:8303/payments/return-callback

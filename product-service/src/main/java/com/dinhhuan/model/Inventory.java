@@ -15,7 +15,7 @@ public class Inventory {
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "variant_id", nullable = false)
-    private ProductVariant variant_id;
+    private ProductVariant variant;
     @Column(name = "order_id")
     private Long orderId;
     @Column(name = "quantity")
