@@ -36,6 +36,12 @@ spring:
                           - Path=/cart/**,/orders/**
                         filters:
                           - StripPrefix=0
+                      - id: payment-service
+                        uri: lb://PAYMENT-SERVICE
+                        predicates:
+                          - Path=/payments/**
+                        filters:
+                          - StripPrefix=0
 eureka:
     client:
         service-url:
@@ -67,6 +73,7 @@ secure:
           - /categories
           - /brands
           - /products
+          - /payments/return-callback
 logging:
     level:
         org.springframework.cloud.gateway: DEBUG

@@ -11,5 +11,5 @@ public interface CartService {
     void increaseQuantity(Long cartItemId, Integer quantity);
     void decreaseQuantity(Long cartItemId, Integer quantity);
     List<CartItemDto> getCartItems(Long userId);
-    void updateQuantity(Long cartItemId, Integer quantity);
+    Long updateQuantity(Long cartItemId, Integer quantity);
 }

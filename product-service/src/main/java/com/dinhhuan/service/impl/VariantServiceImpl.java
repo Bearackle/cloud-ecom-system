@@ -3,6 +3,7 @@ package com.dinhhuan.service.impl;
 import com.baidu.fsg.uid.impl.DefaultUidGenerator;
 import com.dinhhuan.dto.VariantCreation;
 import com.dinhhuan.dto.VariantDto;
+import com.dinhhuan.dto.VariantSyncDto;
 import com.dinhhuan.model.Product;
 import com.dinhhuan.model.ProductVariant;
 import com.dinhhuan.producer.VariantCreationEvent;
@@ -29,12 +30,13 @@ public class VariantServiceImpl implements VariantService {
         variant.setQuantity(variantCreation.getQuantity());
         variant.setImgUrl(variantCreation.getImgUrl());
         variant.setProduct(Product.builder().id(variantCreation.getProductId()).build());
-        productVariantRepository.save(variant);
+        var entity =productVariantRepository.save(variant);
         //send event create variant
-        event.sendMessage(VariantDto.builder()
-                .id(variant.getId())
-                .variantName(variant.getProductVariantName())
-                .imgUrl(variant.getImgUrl())
+        event.sendMessage(VariantSyncDto.builder()
+                .id(entity.getId())
+                .variantName(entity.getProductVariantName())
+                .imgUrl(entity.getImgUrl())
+                .price(entity.getProduct().getPrice())
                 .build());
         return variant.getId();
     }
@@ -52,19 +54,23 @@ public class VariantServiceImpl implements VariantService {
     }
     @Override
     public VariantDto updateVariant(Long variantId, VariantDto variantDto) {
-        ProductVariant pv = productVariantRepository.findById(variantId).orElse(null);
+        ProductVariant pv = productVariantRepository.findByIdWithProduct(variantId).orElse(null);
         if(pv == null) {
             return null;
         }
+        System.out.println("gia tri: " + pv.getProduct().getPrice());
         pv.setProductVariantName(variantDto.getVariantName());
         pv.setQuantity(variantDto.getQuantity());
         pv.setImgUrl(variantDto.getImgUrl());
-        pv.setProduct(Product.builder().id(variantDto.getProductId()).build());
-        productVariantRepository.save(pv);
         //send event
-        var vr = findVariantById(variantId);
-        event.sendMessage(vr);
-        return vr;
+        event.sendMessage(VariantSyncDto.builder()
+                .id(pv.getId())
+                .variantName(pv.getProductVariantName())
+                .imgUrl(pv.getImgUrl())
+                .price(pv.getProduct().getPrice())
+                .build());
+        productVariantRepository.save(pv);
+        return findVariantById(variantId);
     }
 
     @Override

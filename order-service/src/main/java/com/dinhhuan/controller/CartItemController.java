@@ -1,6 +1,7 @@
 package com.dinhhuan.controller;
 
 import com.dinhhuan.dto.request.CartItemRequest;
+import com.dinhhuan.dto.request.QuantityRequestDto;
 import com.dinhhuan.dto.response.CartItemDto;
 import com.dinhhuan.model.CartItem;
 import com.dinhhuan.service.CartService;
@@ -18,7 +19,6 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class CartItemController {
     private final CartService cartService;
-
     @RequestMapping(value = "", method = RequestMethod.POST)
     public ResponseEntity<?> addItemToCart(@RequestHeader("X-User-Id") String userId, @RequestBody CartItemRequest cartItem) {
         cartItem.setUserId(Long.parseLong(userId));
@@ -32,10 +32,13 @@ public class CartItemController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
-    @RequestMapping(value = "", method =  RequestMethod.PUT)
-    public ResponseEntity<?> updateItem(@RequestBody CartItemDto cartItem) {
-         cartService.updateQuantity(cartItem.getId(), cartItem.getQuantity());
-         return new ResponseEntity<>(Map.of("id", cartItem.getId()), HttpStatus.OK);
+    @RequestMapping(value = "/{id}", method =  RequestMethod.PUT)
+    public ResponseEntity<?> updateItem(@PathVariable("id") Long id, @RequestBody CartItemDto cartItem) {
+        Long cartItemId = cartService.updateQuantity(id, cartItem.getQuantity());
+        if(cartItemId == null){
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(Map.of("id", cartItemId), HttpStatus.OK);
     }
     @RequestMapping(value = "/{cartItemId}", method = RequestMethod.DELETE)
     public ResponseEntity<?> removeItemFromCart(@PathVariable Long cartItemId) {
@@ -51,9 +54,9 @@ public class CartItemController {
     }
 
     @RequestMapping(value = "/{cartItemId}/increase", method = RequestMethod.PUT)
-    public ResponseEntity<?> increaseQuantity(@PathVariable Long cartItemId, @RequestParam(defaultValue = "1") Integer quantity) {
+    public ResponseEntity<?> increaseQuantity(@PathVariable Long cartItemId, @RequestBody QuantityRequestDto body) {
         try {
-            cartService.increaseQuantity(cartItemId, quantity);
+            cartService.increaseQuantity(cartItemId, body.getQuantity());
             return ResponseEntity.ok(List.of());
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);

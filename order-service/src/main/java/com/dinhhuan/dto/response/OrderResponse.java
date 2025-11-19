@@ -1,5 +1,7 @@
 package com.dinhhuan.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.AllArgsConstructor;
@@ -21,10 +23,12 @@ public class OrderResponse {
     private Long userId;
     @JsonSerialize(using = ToStringSerializer.class)
     private Long addressId;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime orderDate;
     private Long totalAmount;
     private String note;
     private Integer status;
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private List<ItemResponse> items;
 }
 

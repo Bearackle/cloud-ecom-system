@@ -17,10 +17,31 @@ spring:
         user: product-service
         password: product-service-01
     cloud:
+        function:
+            definition: consumerCreatedOrder;consumerRollbackOrder
         azure:
             servicebus:
                 connection-string: ${CONNECTION_TOPIC_STRING}
-
+        stream:
+            bindings:
+                consumerCreatedOrder-in-0:
+                    destination: order-saga
+                    group: inventory-order-created-sub
+                consumerRollbackOrder-in-0:
+                    destination: order-saga
+                    group: inventory-rollback-sub
+            servicebus:
+                bindings:
+                    consumerCreatedOrder-in-0:
+                        consumer:
+                            auto-complete: true
+                            max-concurrent-calls: 5
+                            prefetch-count: 10
+                    consumerRollbackOrder-in-0:
+                        consumer:
+                            auto-complete: true
+                            max-concurrent-calls: 5
+                            prefetch-count: 10
 eureka:
     client:
         service-url:

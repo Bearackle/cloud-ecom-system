@@ -11,4 +11,5 @@ public class VariantCreationRequest {
     private Long id;
     private String variantName;
     private String imgUrl;
+    private Long price;
 }
