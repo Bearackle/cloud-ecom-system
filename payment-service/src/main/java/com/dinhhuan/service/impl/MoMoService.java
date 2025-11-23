@@ -18,7 +18,7 @@ import java.util.UUID;
 public class MoMoService {
 
     private final MoMoConfig moMoConfig;
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public String createOrder(Long amount, String orderInfo, String orderId) throws Exception {

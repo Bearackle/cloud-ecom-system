@@ -55,8 +55,8 @@ vnpay:
     returnUrl: http://localhost:8303/payments/return-callback
 
 momo:
-  partnerCode: ${MOMO_PARTNER_CODE:MOMO}
-  accessKey: ${MOMO_ACCESS_KEY:accessKey123}
-  secretKey: ${MOMO_SECRET_KEY:secretKey123}
-  returnUrl: http://localhost:8303/payments/momo-return
-  notifyUrl: http://localhost:8303/payments/momo-notify
+  partnerCode: ${MOMO_PARTNER_CODE:MOMOBKUN20180529}
+  accessKey: ${MOMO_ACCESS_KEY:klm05TvNBzhg7h7j}
+  secretKey: ${MOMO_SECRET_KEY:at67qH6mk8w5Y1nAyMoYKMWACiEi2bsa}
+  returnUrl: http://localhost:8307/payments/momo-callback
+  notifyUrl: http://localhost:8307/payments/momo-callback

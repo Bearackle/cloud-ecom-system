@@ -1,5 +1,6 @@
 package com.dinhhuan.util;
 
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -8,9 +9,11 @@ import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 
 @Component
+@Getter
 public class MoMoConfig {
     public static String MOMO_API_URL = "https://test-payment.momo.vn/v2/gateway/api/create";
 
+    // Getters
     @Value("${momo.partnerCode}")
     private String partnerCode;
 
@@ -25,13 +28,6 @@ public class MoMoConfig {
 
     @Value("${momo.notifyUrl}")
     private String notifyUrl;
-
-    // Getters
-    public String getPartnerCode() { return partnerCode; }
-    public String getAccessKey() { return accessKey; }
-    public String getSecretKey() { return secretKey; }
-    public String getReturnUrl() { return returnUrl; }
-    public String getNotifyUrl() { return notifyUrl; }
 
     public static String hmacSHA256(String key, String data) {
         try {
