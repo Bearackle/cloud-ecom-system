@@ -49,8 +49,8 @@ eureka:
         hostname: localhost
 
 vnpay:
-    tmnCode: ${TMN_CODE:abc}
-    hashSecret: ${HASH_SECRET:a123}
+    tmnCode: ${TMN_CODE}
+    hashSecret: ${HASH_SECRET}
     payUrl: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
     returnUrl: http://localhost:8303/payments/return-callback
 
