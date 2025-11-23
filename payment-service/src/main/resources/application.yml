@@ -49,7 +49,14 @@ eureka:
         hostname: localhost
 
 vnpay:
-    tmnCode: ${TMN_CODE}
-    hashSecret: ${HASH_SECRET}
+    tmnCode: ${TMN_CODE:abc}
+    hashSecret: ${HASH_SECRET:a123}
     payUrl: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
     returnUrl: http://localhost:8303/payments/return-callback
+
+momo:
+  partnerCode: ${MOMO_PARTNER_CODE:MOMO}
+  accessKey: ${MOMO_ACCESS_KEY:accessKey123}
+  secretKey: ${MOMO_SECRET_KEY:secretKey123}
+  returnUrl: http://localhost:8303/payments/momo-return
+  notifyUrl: http://localhost:8303/payments/momo-notify
