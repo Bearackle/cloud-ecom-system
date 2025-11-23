@@ -4,24 +4,24 @@ spring:
     application:
         name: user-service
     datasource:
-        url: jdbc:postgresql://localhost:5432/user_db
-        username: usr-service
-        password: user-service-01
+        url: jdbc:postgresql://${DB_HOST:localhost}:5432/user_db
+        username: ${USR_SERVICE_USERNAME:usr-service}
+        password: ${USR_SERVICE_PASSWORD:user-service-01}
         driver-class-name: org.postgresql.Driver
     jpa:
         hibernate:
             ddl-auto: validate
     flyway:
         locations: classpath:db/migration
-        url: jdbc:postgresql://localhost:5432/user_db
-        user: usr-service
-        password: user-service-01
+        url: jdbc:postgresql://${DB_HOST:localhost}:5432/user_db
+        user: ${USR_SERVICE_USERNAME:usr-service}
+        password: ${USR_SERVICE_PASSWORD:user-service-01}
     cloud:
         function:
             definition: consumerRegistration
         azure:
             servicebus:
-                connection-string: ${CONNECTION_TOPIC_STRING}
+                connection-string: ${CONNECTION_TOPIC_STRING:Endpoint=sb://localhost/;SharedAccessKeyName=dev;SharedAccessKey=devKey}
         stream:
             bindings:
                 consumerRegistration-in-0:
@@ -38,11 +38,11 @@ spring:
 eureka:
     client:
         service-url:
-            defaultZone: http://localhost:8301/eureka
+            defaultZone: http://${REGISTRY_HOST:localhost}:8301/eureka
         fetch-registry: true
         register-with-eureka: true
     instance:
-        hostname: localhost
+        hostname: ${HOST_ADDR:localhost}
 logging:
     level:
         org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentInitiator: debug

@@ -1,0 +1,131 @@
+services:
+#    zipkin:
+#        image: openzipkin/zipkin
+#        container_name: zipkin
+#        ports:
+#            - "9411:9411"
+#        networks:
+#            - spring
+    registry-server:
+        image: registry-server-image
+        container_name: registry-server
+        hostname: registry-server
+        environment:
+            REGISTRY_HOST: registry-server
+            ZIPKIN_HOST: zipkin
+        ports:
+            - "8301:8301"
+        networks:
+            - spring
+    api-gateway:
+        image: api-gateway-image
+        container_name: api-gateway
+        hostname: api-gateway
+        environment:
+            REGISTRY_HOST: registry-server
+            HOST_ADDR: registry-server
+        ports:
+            - "8303:8303"
+        networks:
+            - spring
+        depends_on:
+            - registry-server
+
+    auth-service:
+        image: auth-service-image
+        container_name: auth-service
+        hostname: auth-service
+        environment:
+            REGISTRY_HOST: registry-server
+            CONNECTION_TOPIC_STRING: ${CONNECTION_TOPIC_STRING}
+            TOKEN_SECRET: ${TOKEN_SECRET}
+            DB_HOST: host.docker.internal
+            DATASOURCE_HOST: host.docker.internal
+            HOST_ADDR: auth-service
+        ports:
+            - "8304:8304"
+        networks:
+            - spring
+        depends_on:
+            - registry-server
+    user-service:
+        image: user-service-image
+        container_name: user-service
+        hostname: user-service
+        environment:
+            HOST_ADDR: user-service
+            REGISTRY_HOST: registry-server
+            DB_HOST: host.docker.internal
+            DATASOURCE_HOST: host.docker.internal
+            CONNECTION_TOPIC_STRING: ${CONNECTION_TOPIC_STRING}
+        ports:
+            - "8302:8302"
+        networks:
+            - spring
+        depends_on:
+            - registry-server
+    product-service:
+        image: product-service-image
+        container_name: product-service
+        hostname: product-service
+        environment:
+            REGISTRY_HOST: registry-server
+            DB_HOST: host.docker.internal
+            DATASOURCE_HOST: host.docker.internal
+            CONNECTION_TOPIC_STRING: ${CONNECTION_TOPIC_STRING}
+            STORAGE_ACCOUNT_KEY: ${STORAGE_ACCOUNT_KEY}
+            STORAGE_ACCOUNT_NAME: ${STORAGE_ACCOUNT_NAME}
+            STORAGE_CONTAINER_NAME: ${STORAGE_CONTAINER_NAME}
+            CONNECTION_QUEUE_STRING: ${CONNECTION_QUEUE_STRING}
+            HOST_ADDR: product-service
+        ports:
+            - "8305:8305"
+        networks:
+            - spring
+        depends_on:
+            - registry-server
+
+    order-service:
+        image: order-service-image
+        container_name: order-service
+        hostname: order-service
+        environment:
+            REGISTRY_HOST: registry-server
+            DB_HOST: host.docker.internal
+            DATASOURCE_HOST: host.docker.internal
+            CONNECTION_TOPIC_STRING: ${CONNECTION_TOPIC_STRING}
+            HOST_ADDR: order-service
+            PAYMENT_HOST: payment
+        ports:
+            - "8306:8306"
+        networks:
+            - spring
+        depends_on:
+            - registry-server
+
+    payment-service:
+        image: payment-service-image
+        container_name: payment-service
+        hostname: payment-service
+        environment:
+            REGISTRY_HOST: registry-server
+            DB_HOST: host.docker.internal
+            DATASOURCE_HOST: host.docker.internal
+            CONNECTION_TOPIC_STRING: ${CONNECTION_TOPIC_STRING}
+            HOST_ADDR: payment-service
+
+        ports:
+            - "8306:8306"
+        networks:
+            - spring
+        depends_on:
+            - registry-server
+networks:
+    postgres:
+        driver: bridge
+    spring:
+        driver: bridge
+    monitoring:
+
+
+

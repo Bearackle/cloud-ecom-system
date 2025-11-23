@@ -38,7 +38,7 @@ public class AuthorizationFilter implements GlobalFilter, Ordered {
         ServerHttpRequest request = exchange.getRequest();
         AntPathMatcher matcher = new AntPathMatcher();
         boolean isIgnored = ignoreUrls.getUrls().stream()
-                .anyMatch(pattern -> matcher.match(request.getPath().toString(), pattern));
+                .anyMatch(pattern -> matcher.match(pattern, request.getPath().toString()));
         if (isIgnored) {
             return chain.filter(exchange);
         }
@@ -64,7 +64,11 @@ public class AuthorizationFilter implements GlobalFilter, Ordered {
                         return onError(exchange, "Invalid token", HttpStatus.UNAUTHORIZED);
                     }
                 })
-                .onErrorResume(error -> onError(exchange, "Authentication service error" + error.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR));
+                .onErrorResume(error -> {
+                    System.err.println("Authentication error - 1: " + error.getMessage());
+                    error.printStackTrace();
+                    return onError(exchange, "Authentication service error" + error.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+                });
     }
     @Override
     public int getOrder() {

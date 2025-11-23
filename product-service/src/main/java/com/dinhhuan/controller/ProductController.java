@@ -1,7 +1,6 @@
 package com.dinhhuan.controller;
 
 import com.dinhhuan.dto.*;
-import com.dinhhuan.dto.mapper.ProductMapper;
 import com.dinhhuan.model.Product;
 import com.dinhhuan.service.ProductService;
 import lombok.AllArgsConstructor;
@@ -24,7 +23,7 @@ import java.util.Map;
 public class ProductController {
     private final ProductService productService;
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public ResponseEntity<List<ProductSimpleDto>> getProducts(
+    public ResponseEntity<PageResponse<ProductSimpleDto>> getProducts(
             @RequestParam(name = "_page", defaultValue = "1") int page,
             @RequestParam(name = "_perPage", defaultValue = "10") int perPage,
             @RequestParam(name = "_sort", defaultValue = "id") String sort,
@@ -44,9 +43,18 @@ public class ProductController {
                 Math.min(page * perPage - 1, (int) productList.getTotalElements() - 1),
                 productList.getTotalElements()
         ));
+        PageResponse<ProductSimpleDto> response = new PageResponse<>(
+                productList.getContent(),
+                MetaPageResponse.builder()
+                        .page(page)
+                        .perPage(perPage)
+                        .totalElements(productList.getTotalElements())
+                        .totalPages(productList.getTotalPages())
+                        .build()
+        );
         return ResponseEntity.ok()
                 .headers(headers)
-                .body(productList.getContent());
+                .body(response);
     }
     @RequestMapping(value = "", method =  RequestMethod.POST)
     public ResponseEntity<Map<String, Long>> createProduct(@RequestBody ProductDetailCreation productCreation) {

@@ -4,24 +4,24 @@ spring:
     application:
         name: product-service
     datasource:
-        url: jdbc:postgresql://localhost:5432/product_db
-        username: product-service
-        password: product-service-01
+        url: jdbc:postgresql://${DB_HOST:localhost}:5432/product_db
+        username: ${PRODUCT_SERVICE_USERNAME:product-service}
+        password: ${PRODUCT_SERVICE_PASSWORD:product-service-01}
         driver-class-name: org.postgresql.Driver
     jpa:
         hibernate:
             ddl-auto: validate
     flyway:
         locations: classpath:db/migration
-        url: jdbc:postgresql://localhost:5432/product_db
-        user: product-service
-        password: product-service-01
+        url: jdbc:postgresql://${DB_HOST:localhost}:5432/product_db
+        user: ${PRODUCT_SERVICE_USERNAME:product-service}
+        password: ${PRODUCT_SERVICE_PASSWORD:product-service-01}
     cloud:
         function:
             definition: consumerCreatedOrder;consumerRollbackOrder
         azure:
             servicebus:
-                connection-string: ${CONNECTION_TOPIC_STRING}
+                connection-string: ${CONNECTION_TOPIC_STRING:Endpoint=sb://localhost/;SharedAccessKeyName=dev;SharedAccessKey=devKey}
         stream:
             bindings:
                 consumerCreatedOrder-in-0:
@@ -45,11 +45,11 @@ spring:
 eureka:
     client:
         service-url:
-            defaultZone: http://localhost:8301/eureka
+            defaultZone: http://${REGISTRY_HOST:localhost}:8301/eureka
         fetch-registry: true
         register-with-eureka: true
     instance:
-        hostname: localhost
+        hostname: ${HOST_ADDR:localhost}
 
 logging:
     level:
@@ -62,6 +62,6 @@ logging:
         org.hibernate.engine.jdbc.env.internal.JdbcEnvironmentImpl: TRACE
 azure:
     storage:
-        account-name: ${STORAGE_ACCOUNT_NAME}
-        account-key: ${STORAGE_ACCOUNT_KEY}
-        container-name: ${STORAGE_CONTAINER_NAME}
+        account-name: ${STORAGE_ACCOUNT_NAME:abcdef}
+        account-key: ${STORAGE_ACCOUNT_KEY:Endpoint=sb://localhost/;SharedAccessKeyName=dev;SharedAccessKey=devKey}
+        container-name: ${STORAGE_CONTAINER_NAME:abcdef}

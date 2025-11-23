@@ -5,9 +5,9 @@ spring:
     application:
         name: payment-service
     datasource:
-        url: jdbc:postgresql://localhost:5432/payment_db
-        username: payment-service
-        password: payment-service-01
+        url: jdbc:postgresql://${DB_HOST:localhost}:5432/payment_db
+        username: ${PAYMENT_SERVICE_USERNAME:payment-service}
+        password: ${PAYMENT_SERVICE_PASSWORD:payment-service-01}
         driver-class-name: org.postgresql.Driver
     jpa:
         hibernate:
@@ -18,15 +18,15 @@ spring:
                 format_sql: true
     flyway:
         locations: classpath:db/migration
-        url: jdbc:postgresql://localhost:5432/payment_db
-        user: payment-service
-        password: payment-service-01
+        url: jdbc:postgresql://${DB_HOST:localhost}:5432/payment_db
+        user: ${PAYMENT_SERVICE_USERNAME:payment-service}
+        password: ${PAYMENT_SERVICE_PASSWORD:payment-service-01}
     cloud:
         function:
             definition: consumerCreatedOrder
         azure:
             servicebus:
-                connection-string: ${CONNECTION_TOPIC_STRING}
+                connection-string: ${CONNECTION_TOPIC_STRING:Endpoint=sb://localhost/;SharedAccessKeyName=dev;SharedAccessKey=devKey}
         stream:
             bindings:
                 consumerCreatedOrder-in-0:
@@ -42,14 +42,14 @@ spring:
 eureka:
     client:
         service-url:
-            defaultZone: http://localhost:8301/eureka
+            defaultZone: http://${REGISTRY_HOST:localhost}:8301/eureka
         fetch-registry: true
         register-with-eureka: true
     instance:
-        hostname: localhost
+        hostname: ${REGISTRY_HOST:localhost}
 
 vnpay:
-    tmnCode: ${TMN_CODE}
-    hashSecret: ${HASH_SECRET}
+    tmnCode: ${TMN_CODE:12345}
+    hashSecret: ${HASH_SECRET:12345}
     payUrl: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
-    returnUrl: http://localhost:8303/payments/return-callback
+    returnUrl: ${VNPAY_CALL_BACK:http://localhost:8303/payments/return-callback}

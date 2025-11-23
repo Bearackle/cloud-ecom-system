@@ -4,10 +4,16 @@ spring:
     application:
         name: registry-server
     zipkin:
-        base-url: http://localhost:9411
+        base-url: http://${ZIPKIN_HOST:localhost}:9411
+
 eureka:
     client:
         fetch-registry: false
         register-with-eureka: false
+        service-url:
+            defaultZone: http://${REGISTRY_HOST}:8301/eureka/
     instance:
-        hostname: localhost
+        hostname: ${REGISTRY_HOST:localhost}
+    server:
+        renewal-percent-threshold: 0.5
+        renewal-threshold-update-interval-ms: 60000
