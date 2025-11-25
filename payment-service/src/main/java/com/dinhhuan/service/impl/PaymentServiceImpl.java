@@ -82,25 +82,19 @@ public class PaymentServiceImpl implements PaymentService {
                 .toList();
     }
     @Override
-    public String getPaymentUrl(Long orderId, Long amount) {
+    public String getPaymentUrl(Long orderId, Long amount, PaymentMethod paymentMethod) {
         String url;
         try {
-            var payment = getPayment(orderId);
-            if (payment == null) {
-                log.error("Payment not found for order: {}", orderId);
-                return null;
-            }
-
             // return url based on payment method
-            if (payment.getMethod() == PaymentMethod.VN_PAY) {
+            if (paymentMethod == PaymentMethod.VN_PAY) {
                 url = vnPayService.createOrder(amount.intValue(), String.valueOf(orderId), "");
-            } else if (payment.getMethod() == PaymentMethod.MOMO) {
+            } else if (paymentMethod == PaymentMethod.MOMO) {
                 url = moMoService.createOrder(amount, String.valueOf(orderId), String.valueOf(orderId));
-            } else if (payment.getMethod() == PaymentMethod.COD) {
+            } else if (paymentMethod == PaymentMethod.COD) {
                 log.info("COD payment, no URL needed");
-                return null; // COD không cần URL thanh toán
+                return "accepted";
             } else {
-                throw new IllegalArgumentException("Unsupported payment method: " + payment.getMethod());
+                throw new IllegalArgumentException("Unsupported payment method");
             }
         } catch (Exception e) {
             log.error("Failed to create payment URL for order: {}", orderId, e);

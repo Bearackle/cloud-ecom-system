@@ -30,9 +30,11 @@ public class PaymentController {
     private final PaymentFailedProducer paymentFailedProducer;
     @Value("${vnpay.hashSecret}")
     private String vnp_HashSecret;
+    @Value("${frontend.redirect}")
+    private String frontendRedirect;
     @RequestMapping(value = "/generate-url", method = RequestMethod.POST)
     public ResponseEntity<Map<String, String>> getPayUrl(@RequestBody PayUrlRequest request) {
-        var url = paymentService.getPaymentUrl(request.getOrderId(), request.getAmount());
+        var url = paymentService.getPaymentUrl(request.getOrderId(), request.getAmount(), request.getPaymentMethod());
         if(url == null){
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
