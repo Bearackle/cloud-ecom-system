@@ -51,6 +51,7 @@ eureka:
         registry-fetch-interval-seconds: 5
     instance:
         hostname: ${HOST_ADDR:localhost}
+        prefer-ip-address: true
 auth:
     service:
         url: lb://AUTH-SERVICE

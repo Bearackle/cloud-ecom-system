@@ -3,6 +3,7 @@ package com.dinhhuan.controller;
 import com.dinhhuan.dto.request.CartItemRequest;
 import com.dinhhuan.dto.request.QuantityRequestDto;
 import com.dinhhuan.dto.response.CartItemDto;
+import com.dinhhuan.dto.response.CartItemDtoFull;
 import com.dinhhuan.model.CartItem;
 import com.dinhhuan.service.CartService;
 import lombok.RequiredArgsConstructor;
@@ -74,7 +75,7 @@ public class CartItemController {
     }
     @RequestMapping(value = "", method = RequestMethod.GET)
     public ResponseEntity<?> getCartItems(@RequestHeader("X-User-Id") String userId) {
-        List<CartItemDto> items = cartService.getCartItems(Long.parseLong(userId));
+        List<CartItemDtoFull> items = cartService.getCartItemsFull(Long.parseLong(userId));
         if (items == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

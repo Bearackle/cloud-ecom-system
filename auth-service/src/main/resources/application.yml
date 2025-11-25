@@ -33,7 +33,7 @@ eureka:
         hostname: ${HOST_ADDR:localhost}
 jwt:
     secret: ${TOKEN_SECRET:89c5c5074fe690774ce317014d8d37cfc3633231d2}
-    expiration: 6048    00
+    expiration: 604800
 
 logging:
     level:

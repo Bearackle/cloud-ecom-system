@@ -95,7 +95,7 @@ services:
             DATASOURCE_HOST: host.docker.internal
             CONNECTION_TOPIC_STRING: ${CONNECTION_TOPIC_STRING}
             HOST_ADDR: order-service
-            PAYMENT_HOST: payment
+            PAYMENT_HOST: payment-service
         ports:
             - "8306:8306"
         networks:
@@ -113,9 +113,11 @@ services:
             DATASOURCE_HOST: host.docker.internal
             CONNECTION_TOPIC_STRING: ${CONNECTION_TOPIC_STRING}
             HOST_ADDR: payment-service
+            TMN_CODE: ${TMN_CODE}
+            HASH_SECRET: ${HASH_SECRET}
 
         ports:
-            - "8306:8306"
+            - "8307:8307"
         networks:
             - spring
         depends_on:

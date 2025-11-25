@@ -46,7 +46,7 @@ eureka:
         fetch-registry: true
         register-with-eureka: true
     instance:
-        hostname: ${REGISTRY_HOST:localhost}
+        hostname: ${HOST_ADDR:localhost}
 
 vnpay:
     tmnCode: ${TMN_CODE:12345}
