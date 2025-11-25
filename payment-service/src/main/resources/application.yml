@@ -26,7 +26,7 @@ spring:
             definition: consumerCreatedOrder
         azure:
             servicebus:
-                connection-string: ${CONNECTION_TOPIC_STRING:Endpoint=sb://localhost/;SharedAccessKeyName=dev;SharedAccessKey=devKey}
+                connection-string: ${CONNECTION_TOPIC_STRING}
         stream:
             bindings:
                 consumerCreatedOrder-in-0:
@@ -53,3 +53,11 @@ vnpay:
     hashSecret: ${HASH_SECRET:12345}
     payUrl: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
     returnUrl: ${VNPAY_CALL_BACK:http://localhost:8303/payments/return-callback}
+    returnUrl: http://localhost:8303/payments/return-callback
+
+momo:
+  partnerCode: ${MOMO_PARTNER_CODE:MOMO}
+  accessKey: ${MOMO_ACCESS_KEY:F8BBA842ECF85}
+  secretKey: ${MOMO_SECRET_KEY:K951B6PE1waDMi640xX08PD3vg6EkVlz}
+  returnUrl: http://localhost:8307/payments/momo-callback
+  notifyUrl: http://localhost:8307/payments/momo-callback

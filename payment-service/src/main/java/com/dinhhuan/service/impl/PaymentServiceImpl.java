@@ -3,6 +3,7 @@ package com.dinhhuan.service.impl;
 import com.baidu.fsg.uid.impl.DefaultUidGenerator;
 import com.dinhhuan.dto.PaymentCreation;
 import com.dinhhuan.dto.PaymentDto;
+import com.dinhhuan.dto.enums.PaymentMethod;
 import com.dinhhuan.dto.enums.PaymentStatus;
 import com.dinhhuan.model.Order;
 import com.dinhhuan.model.Payment;
@@ -10,6 +11,7 @@ import com.dinhhuan.repository.OrderRepository;
 import com.dinhhuan.repository.PaymentRepository;
 import com.dinhhuan.service.PaymentService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -20,8 +22,10 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class PaymentServiceImpl implements PaymentService {
     private final VNPayService vnPayService;
+    private final MoMoService moMoService;
     private final PaymentRepository paymentRepository;
     private final OrderRepository orderRepository;
     private final DefaultUidGenerator uid;
@@ -81,9 +85,26 @@ public class PaymentServiceImpl implements PaymentService {
     public String getPaymentUrl(Long orderId, Long amount) {
         String url;
         try {
-            url = vnPayService.createOrder(amount.intValue(), String.valueOf(orderId),"");
+            var payment = getPayment(orderId);
+            if (payment == null) {
+                log.error("Payment not found for order: {}", orderId);
+                return null;
+            }
+
+            // return url based on payment method
+            if (payment.getMethod() == PaymentMethod.VN_PAY) {
+                url = vnPayService.createOrder(amount.intValue(), String.valueOf(orderId), "");
+            } else if (payment.getMethod() == PaymentMethod.MOMO) {
+                url = moMoService.createOrder(amount, String.valueOf(orderId), String.valueOf(orderId));
+            } else if (payment.getMethod() == PaymentMethod.COD) {
+                log.info("COD payment, no URL needed");
+                return null; // COD không cần URL thanh toán
+            } else {
+                throw new IllegalArgumentException("Unsupported payment method: " + payment.getMethod());
+            }
         } catch (Exception e) {
-            url =  null;
+            log.error("Failed to create payment URL for order: {}", orderId, e);
+            url = null;
         }
         return url;
     }
