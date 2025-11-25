@@ -1,6 +1,5 @@
 package com.dinhhuan.dto;
 
-import com.dinhhuan.dto.enums.PaymentMethod;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,8 +9,9 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PayUrlRequest {
-    private Long orderId;
-    private Long amount;
-    private PaymentMethod paymentMethod;
+public class MetaPageResponse {
+    private int page;
+    private int perPage;
+    private long totalElements;
+    private int totalPages;
 }

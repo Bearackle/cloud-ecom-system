@@ -2,6 +2,7 @@ package com.dinhhuan.service;
 
 import com.dinhhuan.dto.request.CartItemRequest;
 import com.dinhhuan.dto.response.CartItemDto;
+import com.dinhhuan.dto.response.CartItemDtoFull;
 
 import java.util.List;
 
@@ -12,4 +13,5 @@ public interface CartService {
     void decreaseQuantity(Long cartItemId, Integer quantity);
     List<CartItemDto> getCartItems(Long userId);
     Long updateQuantity(Long cartItemId, Integer quantity);
+    List<CartItemDtoFull> getCartItemsFull(Long userId);
 }

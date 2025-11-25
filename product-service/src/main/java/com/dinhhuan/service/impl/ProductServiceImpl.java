@@ -2,7 +2,6 @@ package com.dinhhuan.service.impl;
 
 import com.baidu.fsg.uid.impl.DefaultUidGenerator;
 import com.dinhhuan.dto.*;
-import com.dinhhuan.dto.mapper.ProductMapper;
 import com.dinhhuan.model.*;
 import com.dinhhuan.repository.ProductImageRepository;
 import com.dinhhuan.repository.ProductRepository;

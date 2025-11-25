@@ -74,6 +74,7 @@ public class OrderServiceImpl implements OrderService {
         return paymentClient.generatePaymentUrl(PaymentRequest.builder()
                 .orderId(savedOrder.getId())
                 .amount(savedOrder.getTotalAmount())
+                .paymentMethod(orderRequest.getMethod())
                 .build()).getUrl();
     }
     @Override

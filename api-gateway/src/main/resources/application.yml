@@ -45,12 +45,13 @@ spring:
 eureka:
     client:
         service-url:
-            defaultZone: http://localhost:8301/eureka
+            defaultZone: http://${REGISTRY_HOST:localhost}:8301/eureka
         fetch-registry: true
         register-with-eureka: true
         registry-fetch-interval-seconds: 5
     instance:
-        hostname: localhost
+        hostname: ${HOST_ADDR:localhost}
+        prefer-ip-address: true
 auth:
     service:
         url: lb://AUTH-SERVICE
@@ -74,6 +75,7 @@ secure:
           - /brands
           - /products
           - /payments/return-callback
+          - /actuator/**
 logging:
     level:
         org.springframework.cloud.gateway: DEBUG

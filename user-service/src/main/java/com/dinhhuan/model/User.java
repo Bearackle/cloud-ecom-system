@@ -21,10 +21,12 @@ public class User {
     @Column(name = "email", nullable = false)
     private String email;
     @Column(name = "location", nullable = true)
+    @Builder.Default
     private String location = "vietnam";
     @Column(name = "phone_number", nullable = true)
     private String phoneNumber;
     @Column(name = "lang", nullable = true)
+    @Builder.Default
     private String language = "vi";
     @Column(name = "registration_date", nullable = false)
     private LocalDateTime registrationDate;

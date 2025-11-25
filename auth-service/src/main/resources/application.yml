@@ -4,9 +4,9 @@ spring:
     application:
         name: auth-service
     datasource:
-        url: jdbc:postgresql://${DATASOURCE_HOST:localhost}:5432/auth_db
-        username: auth-service
-        password: auth-service-01
+        url: jdbc:postgresql://${DB_HOST:localhost}:5432/auth_db
+        username: ${AUTH_SERVICE_USER:auth-service}
+        password: ${AUTH_SERVICE_PASSWORD:auth-service-01}
         driver-class-name: org.postgresql.Driver
     jpa:
         hibernate:
@@ -16,23 +16,23 @@ spring:
                 dialect: org.hibernate.dialect.PostgreSQLDialect
     flyway:
         locations: classpath:db/migration
-        url: jdbc:postgresql://${DATASOURCE_HOST:localhost}:5432/auth_db
-        user: auth-service
-        password: auth-service-01
+        url: jdbc:postgresql://${DB_HOST:localhost}:5432/auth_db
+        user: ${AUTH_SERVICE_USER:auth-service}
+        password: ${AUTH_SERVICE_PASSWORD:auth-service-01}
     cloud:
         azure:
             servicebus:
-                connection-string: ${CONNECTION_TOPIC_STRING}
+                connection-string: ${CONNECTION_TOPIC_STRING:Endpoint=sb://localhost/;SharedAccessKeyName=dev;SharedAccessKey=devKey}
 eureka:
     client:
         service-url:
-            defaultZone: http://localhost:8301/eureka
+            defaultZone: http://${REGISTRY_HOST:localhost}:8301/eureka
         fetch-registry: true
         register-with-eureka: true
     instance:
-        hostname: localhost
+        hostname: ${HOST_ADDR:localhost}
 jwt:
-    secret: WvqWxVY0NuX469fNVMVT3YsJmLevE6Vk4TOwfwqhVOaiGYLE8jTtmmclg7Zm/LOAbRJKPq5SAzlWh0NI7Y01urMPvreS13eo89hb7YaDd7k=
+    secret: ${TOKEN_SECRET:89c5c5074fe690774ce317014d8d37cfc3633231d2}
     expiration: 604800
 
 logging:

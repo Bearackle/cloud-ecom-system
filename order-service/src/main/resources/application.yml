@@ -5,9 +5,9 @@ spring:
     application:
         name: order-service
     datasource:
-        url: jdbc:postgresql://localhost:5432/order_db
-        username: order-service
-        password: order-service-01
+        url: jdbc:postgresql://${DB_HOST:localhost}:5432/order_db
+        username: ${ORDER_SERVICE_USER:order-service}
+        password: ${ORDER_SERVICE_PASSWORD:order-service-01}
         driver-class-name: org.postgresql.Driver
     jpa:
         hibernate:
@@ -18,15 +18,15 @@ spring:
                 format_sql: true
     flyway:
         locations: classpath:db/migration
-        url: jdbc:postgresql://localhost:5432/order_db
-        user: order-service
-        password: order-service-01
+        url: jdbc:postgresql://${DB_HOST:localhost}:5432/order_db
+        user: ${ORDER_SERVICE_USER:order-service}
+        password: ${ORDER_SERVICE_PASSWORD:order-service-01}
     cloud:
         function:
             definition: consumerRegistration;consumerVariant;consumerAddress;consumerFailedPayment;consumerSuccessPayment
         azure:
             servicebus:
-                connection-string: ${CONNECTION_TOPIC_STRING}
+                connection-string: ${CONNECTION_TOPIC_STRING:Endpoint=sb://localhost/;SharedAccessKeyName=dev;SharedAccessKey=devKey}
         stream:
             bindings:
                 consumerRegistration-in-0:
@@ -74,12 +74,12 @@ spring:
 eureka:
     client:
         service-url:
-            defaultZone: http://localhost:8301/eureka
+            defaultZone: http://${REGISTRY_HOST:localhost}:8301/eureka
         fetch-registry: true
         register-with-eureka: true
     instance:
-        hostname: localhost
+        hostname: ${HOST_ADDR:localhost}
 
 payment:
     service:
-        url: http://localhost:8307
+        url: http://${PAYMENT_HOST:localhost}:8307

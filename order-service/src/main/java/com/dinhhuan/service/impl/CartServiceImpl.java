@@ -4,6 +4,7 @@ import com.baidu.fsg.uid.impl.DefaultUidGenerator;
 import com.dinhhuan.common.AppEx;
 import com.dinhhuan.dto.request.CartItemRequest;
 import com.dinhhuan.dto.response.CartItemDto;
+import com.dinhhuan.dto.response.CartItemDtoFull;
 import com.dinhhuan.model.CartItem;
 import com.dinhhuan.model.ProductVariant;
 import com.dinhhuan.model.User;
@@ -105,6 +106,21 @@ public class CartServiceImpl implements CartService {
                 .variantId(cartItem.getVariant().getId())
                 .quantity(cartItem.getQuantity())
                 .build();
+    }
+    @Override
+    public List<CartItemDtoFull> getCartItemsFull(Long userId) {
+        return cartItemRepository.findByUserId(userId).stream()
+                .filter(item -> item.getQuantity() > 0)
+                .map(
+                        item -> CartItemDtoFull.builder()
+                                .id(item.getId())
+                                .variantId(item.getVariant().getId())
+                                .variantName(item.getVariant().getName())
+                                .quantity(item.getQuantity())
+                                .imgUrl(item.getVariant().getImgUrl())
+                                .build()
+                )
+                .toList();
     }
 }
 
