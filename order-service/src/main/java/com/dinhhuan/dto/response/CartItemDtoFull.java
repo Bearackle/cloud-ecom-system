@@ -17,6 +17,7 @@ public class CartItemDtoFull {
     @JsonSerialize(using = ToStringSerializer.class)
     private Long variantId;
     private String variantName;
+    private Long price;
     private Integer quantity;
     private String imgUrl;
 }
