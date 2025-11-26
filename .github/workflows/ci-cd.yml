@@ -197,7 +197,7 @@ jobs:
           SERVICES=("api-gateway" "auth-service" "user-service" "product-service" "order-service" "payment-service")
           
           for service in "${SERVICES[@]}"; do
-            DEPLOYMENT_FILE="k8s/${service}-deployment/deployment.yaml"
+            DEPLOYMENT_FILE="k8s/${service}-deployment.yaml"
           
             if [ -f "$DEPLOYMENT_FILE" ]; then
               # Update image tag
