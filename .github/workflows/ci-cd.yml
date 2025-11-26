@@ -14,19 +14,10 @@ env:
   NAMESPACE: ecom
 
 jobs:
-  # ===== BUILD ALL MICROSERVICES =====
-  build-all:
+  # ===== BUILD ALL MODULES (PARENT + COMMONS + ALL SERVICES) =====
+  build-all-modules:
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        service:
-          - api-gateway
-          - auth-service
-          - user-service
-          - product-service
-          - order-service
-          - payment-service
+    timeout-minutes: 30
 
     steps:
       - name: Checkout code
@@ -39,44 +30,123 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: Build ${{ matrix.service }}
-        working-directory: ./services/${{ matrix.service }}
+      - name: Install Third-Party Libraries
         run: |
-          echo "===== Building ${{ matrix.service }} ====="
-          mvn clean package -DskipTests
+          echo "===== Installing Baidu UID Generator ====="
+          mvn install:install-file \
+            -Dfile=libs/uid-generator-1.0.0-SNAPSHOT.jar \
+            -DgroupId=com.baidu.fsg \
+            -DartifactId=uid-generator \
+            -Dversion=1.0.0-SNAPSHOT \
+            -Dpackaging=jar \
+            -DgeneratePom=true
+          echo "✅ Third-party libraries installed"
 
-      - name: Run tests for ${{ matrix.service }}
-        working-directory: ./services/${{ matrix.service }}
-        run: mvn test
-        continue-on-error: false
+      - name: Build All Modules (Parent + Commons + Services)
+        run: |
+          echo "===== Building entire project ====="
+          echo "This will build:"
+          echo "  - Parent POM (ecom)"
+          echo "  - commons module"
+          echo "  - All microservices"
+          echo ""
+          
+          # Build everything in one command
+          mvn clean install -DskipTests
+          
+          echo ""
+          echo "✅ All modules built successfully!"
+          echo ""
+          echo "Built artifacts:"
+          find . -name "*.jar" -not -path "*/original/*" | grep target
+
+      - name: Run Tests
+        run: |
+          echo "===== Running tests for all modules ====="
+          mvn test
+        continue-on-error: true
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: |
+            **/target/*.jar
+            !**/target/*-original.jar
+          retention-days: 1
+
+  # ===== BUILD AND PUSH DOCKER IMAGES =====
+  docker-build-push:
+    needs: build-all-modules
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    strategy:
+      matrix:
+        service:
+          - api-gateway
+          - auth-service
+          - user-service
+          - product-service
+          - order-service
+          - payment-service
+      fail-fast: false
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+
+      - name: Verify JAR exists
+        run: |
+          echo "===== Checking JAR file for ${{ matrix.service }} ====="
+          
+          if [ -f "${{ matrix.service }}/target/${{ matrix.service }}-0.0.1-SNAPSHOT.jar" ]; then
+            echo "✅ JAR file found"
+            ls -lh ${{ matrix.service }}/target/*.jar
+          else
+            echo "❌ JAR file not found!"
+            echo "Available files in target:"
+            ls -la ${{ matrix.service }}/target/ || echo "Target directory not found"
+            exit 1
+          fi
 
       - name: Azure Login
         uses: azure/login@v1
+        timeout-minutes: 2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Build and Push Docker Image
-        working-directory: /${{ matrix.service }}
+        timeout-minutes: 10
+        working-directory: ${{ matrix.service }}
         run: |
           echo "===== Building Docker Image for ${{ matrix.service }} ====="
-          az acr login --name ${{ env.ACR_LOGIN_SERVER }}
+          
+          # Extract ACR name
+          ACR_NAME=$(echo ${{ env.ACR_LOGIN_SERVER }} | cut -d'.' -f1)
+          
+          # Login to ACR
+          az acr login --name $ACR_NAME
           
           # Build Docker image
           docker build -t ${{ env.ACR_LOGIN_SERVER }}/${{ matrix.service }}:${{ env.IMAGE_TAG }} .
-          docker tag ${{ env.ACR_LOGIN_SERVER }}/${{ matrix.service }}:${{ env.IMAGE_TAG }} \
-                     ${{ env.ACR_LOGIN_SERVER }}/${{ matrix.service }}:latest
           
           # Push to ACR
           echo "===== Pushing to ACR ====="
           docker push ${{ env.ACR_LOGIN_SERVER }}/${{ matrix.service }}:${{ env.IMAGE_TAG }}
-          docker push ${{ env.ACR_LOGIN_SERVER }}/${{ matrix.service }}:latest
           
           echo "✅ Successfully built and pushed ${{ matrix.service }}"
 
-  # ===== DEPLOY ALL SERVICES =====
+  # ===== DEPLOY ALL SERVICES TO AKS =====
   deploy-all:
-    needs: build-all
+    needs: docker-build-push
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     if: github.ref == 'refs/heads/main'
 
     steps:
@@ -85,6 +155,7 @@ jobs:
 
       - name: Azure Login
         uses: azure/login@v1
+        timeout-minutes: 2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
@@ -97,91 +168,185 @@ jobs:
       - name: Create namespace if not exists
         run: |
           kubectl create namespace ${{ env.NAMESPACE }} --dry-run=client -o yaml | kubectl apply -f -
+          echo "✅ Namespace ready"
 
-      - name: Update Kubernetes Manifests
+      - name: Create/Update ACR Secret
+        run: |
+          echo "===== Creating ACR pull secret ====="
+          
+          ACR_NAME=$(echo ${{ env.ACR_LOGIN_SERVER }} | cut -d'.' -f1)
+          
+          # Get ACR credentials
+          ACR_USERNAME=$(az acr credential show --name $ACR_NAME --query username -o tsv)
+          ACR_PASSWORD=$(az acr credential show --name $ACR_NAME --query passwords[0].value -o tsv)
+          
+          # Create/update secret
+          kubectl create secret docker-registry acr-secret \
+            --docker-server=${{ env.ACR_LOGIN_SERVER }} \
+            --docker-username=$ACR_USERNAME \
+            --docker-password=$ACR_PASSWORD \
+            --namespace=${{ env.NAMESPACE }} \
+            --dry-run=client -o yaml | kubectl apply -f -
+          
+          echo "✅ ACR secret created/updated"
+
+      - name: Update Kubernetes Manifests with New Image Tags
         run: |
           echo "===== Updating image tags to ${{ env.IMAGE_TAG }} ====="
-          find k8s -name "deployment.yaml" -type f -exec sed -i "s|:latest|:${{ env.IMAGE_TAG }}|g" {} \;
+          
+          SERVICES=("api-gateway" "auth-service" "user-service" "product-service" "order-service" "payment-service")
+          
+          for service in "${SERVICES[@]}"; do
+            DEPLOYMENT_FILE="k8s/${service}-deployment/deployment.yaml"
+          
+            if [ -f "$DEPLOYMENT_FILE" ]; then
+              # Update image tag
+              sed -i "s|image: ${ACR_LOGIN_SERVER}/${service}:.*|image: ${ACR_LOGIN_SERVER}/${service}:${IMAGE_TAG}|g" \
+                "$DEPLOYMENT_FILE"
+          
+              echo "✅ Updated ${service} to use tag ${IMAGE_TAG}"
+            else
+              echo "⚠️  Deployment file not found: $DEPLOYMENT_FILE"
+            fi
+          done
 
       - name: Deploy ConfigMap
         run: |
           if [ -f k8s/configmap.yaml ]; then
-            kubectl apply -f k8s/configmap.yaml
+            kubectl apply -f k8s/configmap.yaml -n ${{ env.NAMESPACE }}
             echo "✅ ConfigMap applied"
+          else
+            echo "⚠️  No ConfigMap found, skipping..."
           fi
 
       - name: Deploy Services in Order
         run: |
-          echo "===== Deploying Microservices ====="
+          echo "===== Deploying Microservices in Dependency Order ====="
+          echo ""
           
-          # 1. Deploy Auth Service first (others depend on it)
-          echo "Deploying auth-service..."
-          kubectl apply -f k8s/auth-service-deployment/
-          
-          # 2. Deploy User Service
-          echo "Deploying user-service..."
-          kubectl apply -f k8s/user-service-deployment/
-          
-          # 3. Deploy Product Service
-          echo "Deploying product-service..."
-          kubectl apply -f k8s/product-service-deployment/
-          
-          # 4. Deploy Order Service
-          echo "Deploying order-service..."
-          kubectl apply -f k8s/order-service-deployment/
-          
-          # 5. Deploy Payment Service
-          echo "Deploying payment-service..."
-          kubectl apply -f k8s/payment-service-deployment/
-          
-          # 6. Deploy API Gateway last (routes to all services)
-          echo "Deploying api-gateway..."
-          kubectl apply -f k8s/api-gateway-deployment/
-          
-          echo "✅ All services deployed"
-
-      - name: Wait for Deployments
-        run: |
-          echo "===== Waiting for all deployments to be ready ====="
-          
-          SERVICES=("auth-service" "user-service" "product-service" "order-service" "payment-service" "api-gateway")
+          # Define deployment order (dependencies first)
+          SERVICES=(
+            "auth-service"
+            "user-service"
+            "product-service"
+            "order-service"
+            "payment-service"
+            "api-gateway"
+          )
           
           for service in "${SERVICES[@]}"; do
-            echo "Waiting for $service..."
-            kubectl rollout status deployment/$service -n ${{ env.NAMESPACE }} --timeout=300s
+            echo "----------------------------------------"
+            echo "Deploying: $service"
+            echo "----------------------------------------"
+          
+            # Apply deployment
+            kubectl apply -f k8s/${service}-deployment/ -n ${{ env.NAMESPACE }}
+          
+            # Wait for deployment to be ready (max 3 minutes)
+            echo "Waiting for $service to be ready..."
+            kubectl rollout status deployment/$service -n ${{ env.NAMESPACE }} --timeout=180s
+          
             if [ $? -eq 0 ]; then
               echo "✅ $service deployed successfully"
+              echo ""
             else
               echo "❌ $service deployment failed"
+          
+              # Show debug info
+              echo ""
+              echo "Pod status:"
+              kubectl get pods -n ${{ env.NAMESPACE }} -l app=$service
+              echo ""
+              echo "Recent events:"
+              kubectl get events -n ${{ env.NAMESPACE }} --sort-by='.lastTimestamp' | tail -10
+          
               exit 1
             fi
           done
           
-          echo "✅ All services are ready!"
+          echo "========================================="
+          echo "✅ All services deployed successfully!"
+          echo "========================================="
 
-      - name: Verify Deployment
+      - name: Verify Deployment Status
         run: |
-          echo "===== Deployment Status ====="
           echo ""
-          echo "Pods:"
+          echo "========================================="
+          echo "         DEPLOYMENT VERIFICATION"
+          echo "========================================="
+          echo ""
+          
+          echo "📦 PODS:"
+          echo "---------------------------------------"
           kubectl get pods -n ${{ env.NAMESPACE }} -o wide
           echo ""
-          echo "Services:"
+          
+          echo "🌐 SERVICES:"
+          echo "---------------------------------------"
           kubectl get services -n ${{ env.NAMESPACE }}
           echo ""
-          echo "Deployments:"
+          
+          echo "🚀 DEPLOYMENTS:"
+          echo "---------------------------------------"
           kubectl get deployments -n ${{ env.NAMESPACE }}
+          echo ""
+          
+          echo "📊 REPLICA SETS:"
+          echo "---------------------------------------"
+          kubectl get replicasets -n ${{ env.NAMESPACE }}
+          echo ""
 
       - name: Get API Gateway URL
         run: |
-          echo "===== Getting API Gateway URL ====="
-          kubectl get service api-gateway -n ${{ env.NAMESPACE }}
+          echo "========================================="
+          echo "      API GATEWAY ACCESS INFO"
+          echo "========================================="
+          echo ""
           
+          # Get service info
+          kubectl get service api-gateway -n ${{ env.NAMESPACE }}
+          echo ""
+          
+          # Try to get external IP
           EXTERNAL_IP=$(kubectl get service api-gateway -n ${{ env.NAMESPACE }} -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
           
           if [ -z "$EXTERNAL_IP" ]; then
-            echo "⚠️ External IP not yet assigned. Run this command later:"
-            echo "kubectl get service api-gateway -n ${{ env.NAMESPACE }}"
+            echo "⏳ External IP is being provisioned..."
+            echo ""
+            echo "Run this command in a few minutes to check:"
+            echo "  kubectl get service api-gateway -n ${{ env.NAMESPACE }}"
           else
-            echo "✅ API Gateway is accessible at: http://$EXTERNAL_IP"
+            echo "✅ API Gateway is ready!"
+            echo ""
+            echo "🌐 Access URL: http://$EXTERNAL_IP"
+            echo ""
+            echo "Test the API:"
+            echo "  curl http://$EXTERNAL_IP/health"
           fi
+          echo ""
+          echo "========================================="
+
+      - name: Display Useful Commands
+        if: always()
+        run: |
+          echo ""
+          echo "========================================="
+          echo "       USEFUL KUBECTL COMMANDS"
+          echo "========================================="
+          echo ""
+          echo "View logs:"
+          echo "  kubectl logs -f deployment/<service-name> -n ${{ env.NAMESPACE }}"
+          echo ""
+          echo "Describe pod:"
+          echo "  kubectl describe pod <pod-name> -n ${{ env.NAMESPACE }}"
+          echo ""
+          echo "Exec into pod:"
+          echo "  kubectl exec -it <pod-name> -n ${{ env.NAMESPACE }} -- /bin/sh"
+          echo ""
+          echo "Check events:"
+          echo "  kubectl get events -n ${{ env.NAMESPACE }} --sort-by='.lastTimestamp'"
+          echo ""
+          echo "Port forward (for testing):"
+          echo "  kubectl port-forward service/api-gateway 8080:80 -n ${{ env.NAMESPACE }}"
+          echo ""
+          echo "========================================="

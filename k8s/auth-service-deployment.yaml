@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: auth-service
-          image: ecomsystem01.azurecr.io/auth-service-image:latest
+          image: ecomsystem01.azurecr.io/auth-service:latest
           ports:
             - containerPort: 8304
               name: http
