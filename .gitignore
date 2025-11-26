@@ -34,3 +34,4 @@ build/
 
 k8s/app-secrets.yaml
 k8s-secrets/
+k8s-blue-green/

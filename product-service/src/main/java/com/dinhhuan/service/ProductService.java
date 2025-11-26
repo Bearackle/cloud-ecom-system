@@ -17,4 +17,6 @@ public interface ProductService {
     Page<ProductSimpleDto> getListProudct(Pageable pageable);
     ProductDto updateProduct(Long id, ProductDetailEdit productEdit);
     List<ProductRef> getProductRefs();
+    List<ProductSimpleDto> getProductTopDeal();
+    Page<ProductSimpleDto> getProductByCategory(Pageable page, Long category);
 }
