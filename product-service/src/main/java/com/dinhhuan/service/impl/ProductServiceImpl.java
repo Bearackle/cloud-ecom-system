@@ -3,7 +3,6 @@ package com.dinhhuan.service.impl;
 import com.baidu.fsg.uid.impl.DefaultUidGenerator;
 import com.dinhhuan.dto.*;
 import com.dinhhuan.model.*;
-import com.dinhhuan.repository.ProductImageRepository;
 import com.dinhhuan.repository.ProductRepository;
 import com.dinhhuan.service.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -74,7 +72,7 @@ public class ProductServiceImpl implements ProductService {
                 .images(p.getImages().stream().map(
                         img -> ImageDto.builder()
                                 .id(img.getId())
-                                .imgUrls(img.getImgUrls())
+                                .imgUrl(img.getImgUrls())
                                 .build())
                         .toList())
                 .build();
@@ -144,7 +142,7 @@ public class ProductServiceImpl implements ProductService {
                             .stream()
                             .map(img -> Image.builder()
                                     .id(img.getId())
-                                    .imgUrls(img.getImgUrls())
+                                    .imgUrls(img.getImgUrl())
                                     .product(product)
                                     .build()
                             ).toList());

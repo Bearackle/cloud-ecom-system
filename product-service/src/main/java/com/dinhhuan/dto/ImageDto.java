@@ -10,5 +10,5 @@ import lombok.Data;
 public class ImageDto {
     @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
-    private String imgUrls;
+    private String imgUrl;
 }
