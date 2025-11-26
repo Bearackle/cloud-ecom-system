@@ -240,7 +240,7 @@ jobs:
             echo "----------------------------------------"
           
             # Apply deployment
-            kubectl apply -f k8s/${service}-deployment/ -n ${{ env.NAMESPACE }}
+            kubectl apply -f k8s/${service}-deployment.yaml -n ${{ env.NAMESPACE }}
           
             # Wait for deployment to be ready (max 3 minutes)
             echo "Waiting for $service to be ready..."
