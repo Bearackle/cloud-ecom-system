@@ -1,7 +1,7 @@
 package com.dinhhuan.service.impl;
 
 import com.baidu.fsg.uid.impl.DefaultUidGenerator;
-import com.dinhhuan.dto.request.VariantCreationRequest;
+import com.dinhhuan.dto.request.VariantSyncDto;
 import com.dinhhuan.model.ProductVariant;
 import com.dinhhuan.repository.VariantRepository;
 import com.dinhhuan.service.VariantService;
@@ -14,7 +14,7 @@ public class VariantServiceImpl implements VariantService {
     private final VariantRepository variantRepository;
     private final DefaultUidGenerator uid;
     @Override
-    public Long createOrUpdate(VariantCreationRequest variantCreation) {
+    public Long createOrUpdate(VariantSyncDto variantCreation) {
         var entity = variantRepository.findById(variantCreation.getId()).orElse(
                 new ProductVariant()
         );

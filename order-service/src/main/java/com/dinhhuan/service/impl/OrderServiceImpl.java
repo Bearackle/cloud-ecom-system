@@ -5,10 +5,7 @@ import com.dinhhuan.common.AppEx;
 import com.dinhhuan.dto.request.CreateOrderDto;
 import com.dinhhuan.dto.request.OrderRequest;
 import com.dinhhuan.dto.request.PaymentRequest;
-import com.dinhhuan.dto.response.ItemInventoryDto;
-import com.dinhhuan.dto.response.ItemResponse;
-import com.dinhhuan.dto.response.OrderResponse;
-import com.dinhhuan.dto.response.OrderResponseDetails;
+import com.dinhhuan.dto.response.*;
 import com.dinhhuan.enums.OrderStatus;
 import com.dinhhuan.model.*;
 import com.dinhhuan.producer.CreateOrderEvent;
@@ -133,6 +130,30 @@ public class OrderServiceImpl implements OrderService {
                                 .build())
                         .toList()
                 ).build();
+    }
+    @Override
+    public List<OrderHistoryDto> getAllHistoryUserOrder(Long userId) {
+         return orderRepository.findAllByUser_Id(userId)
+                 .stream()
+                 .map(o -> OrderHistoryDto.builder()
+                         .id(o.getId())
+                                 .addressDetail(o.getAddress().getLocation())
+                                 .createdDate(o.getOrderDate())
+                                 .totalAmount(o.getTotalAmount())
+                                 .note(o.getNote())
+                                 .status(OrderStatus.fromCode(o.getStatus()))
+                                 .products(
+                                         o.getItems().stream().map(
+                                                 i -> ItemHistoryDto.builder()
+                                                         .id(i.getId())
+                                                         .variantId(i.getVariant().getId())
+                                                         .quantity(i.getQuantity())
+                                                         .imgUrl(i.getVariant().getImgUrl())
+                                                         .variantName(i.getVariant().getName()
+                                                                 ).build()
+                                         ).toList()
+                         ).build()
+                 ).toList();
     }
 
     private List<Item> convertCartItemsToItems(Order order, List<CartItem> cartItems) {
