@@ -56,7 +56,7 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Build and Push Docker Image
-        working-directory: ./services/${{ matrix.service }}
+        working-directory: /${{ matrix.service }}
         run: |
           echo "===== Building Docker Image for ${{ matrix.service }} ====="
           az acr login --name ${{ env.ACR_LOGIN_SERVER }}
