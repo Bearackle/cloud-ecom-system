@@ -19,7 +19,7 @@ public class UserServiceImpl implements UserService {
         User targetUser = userRepository.findById(user.getId()).orElse(null);
         if(targetUser == null){
             targetUser = new User();
-            targetUser.setId(uid.getUID());
+            targetUser.setId(user.getId());
         }
         targetUser.setEmail(user.getEmail());
         targetUser.setPhone(user.getPhoneNumber());
