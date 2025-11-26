@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: order-service
-          image: ecomsystem01.azurecr.io/order-service
+          image: ecomsystem01.azurecr.io/order-service:PLACEHOLDER
           ports:
             - containerPort: 8306
               name: http
