@@ -2,6 +2,7 @@ package com.dinhhuan.controller;
 
 import com.dinhhuan.dto.request.OrderRequest;
 import com.dinhhuan.dto.request.OrderStatusRequest;
+import com.dinhhuan.dto.response.OrderHistoryDto;
 import com.dinhhuan.dto.response.OrderResponse;
 import com.dinhhuan.dto.response.OrderResponseDetails;
 import com.dinhhuan.service.OrderService;
@@ -58,9 +59,17 @@ public class OrderController {
                 .headers(headers)
                 .body(orderList.getContent());
     }
+//    @RequestMapping(value = "/user", method = RequestMethod.GET)
+//    public ResponseEntity<List<OrderResponse>> getAllUserOrder(@RequestHeader("X-User-Id") String userId) {
+//        var orderList = orderService.getAllUserOrder(Long.parseLong(userId));
+//        if (orderList == null) {
+//            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//        return new ResponseEntity<>(orderList, HttpStatus.OK);
+//    }
     @RequestMapping(value = "/user", method = RequestMethod.GET)
-    public ResponseEntity<List<OrderResponse>> getAllUserOrder(@RequestHeader("X-User-Id") String userId) {
-        var orderList = orderService.getAllUserOrder(Long.parseLong(userId));
+    public ResponseEntity<List<OrderHistoryDto>> getAllUserOrder(@RequestHeader("X-User-Id") String userId) {
+        var orderList = orderService.getAllHistoryUserOrder(Long.parseLong(userId));
         if (orderList == null) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }

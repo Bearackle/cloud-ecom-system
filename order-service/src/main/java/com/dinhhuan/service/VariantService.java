@@ -1,7 +1,7 @@
 package com.dinhhuan.service;
 
-import com.dinhhuan.dto.request.VariantCreationRequest;
+import com.dinhhuan.dto.request.VariantSyncDto;
 
 public interface VariantService {
-    Long createOrUpdate(VariantCreationRequest variantCreation);
+    Long createOrUpdate(VariantSyncDto variantCreation);
 }
