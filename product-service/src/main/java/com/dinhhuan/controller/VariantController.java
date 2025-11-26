@@ -1,9 +1,7 @@
 package com.dinhhuan.controller;
 
 
-import com.dinhhuan.dto.ProductSimpleDto;
-import com.dinhhuan.dto.VariantCreation;
-import com.dinhhuan.dto.VariantDto;
+import com.dinhhuan.dto.*;
 import com.dinhhuan.service.VariantService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -62,7 +60,7 @@ public class VariantController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public ResponseEntity<List<VariantDto>> getListVariants(
+    public ResponseEntity<PageResponse<VariantDto>> getListVariants(
             @RequestParam(name = "_page", defaultValue = "1") int page,
             @RequestParam(name = "_perPage", defaultValue = "10") int perPage,
             @RequestParam(name = "_sort", defaultValue = "id") String sort,
@@ -82,8 +80,17 @@ public class VariantController {
                 Math.min(page * perPage - 1, (int) variantList.getTotalElements() - 1),
                 variantList.getTotalElements()
         ));
+        PageResponse<VariantDto> response = new PageResponse<>(
+                variantList.getContent(),
+                MetaPageResponse.builder()
+                        .page(page)
+                        .perPage(perPage)
+                        .totalElements(variantList.getTotalElements())
+                        .totalPages(variantList.getTotalPages())
+                        .build()
+        );
         return ResponseEntity.ok()
                 .headers(headers)
-                .body(variantList.getContent());
+                .body(response);
     }
 }
