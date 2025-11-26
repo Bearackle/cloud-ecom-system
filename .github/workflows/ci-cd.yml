@@ -34,9 +34,9 @@ jobs:
             echo "===== Installing Baidu FSG to local Maven repo ====="
             mvn install:install-file \
               -Dfile=libs/uid-generator-1.0.0-SNAPSHOT.jar \
-              -DgroupId=com.baidu \
-              -DartifactId=fsg \
-              -Dversion=1.0.0 \
+              -DgroupId=com.baidu.fsg \
+              -DartifactId=uid-generator \
+              -Dversion=1.0.0-SNAPSHOT \
               -Dpackaging=jar \
               -DgeneratePom=true
             
@@ -58,6 +58,7 @@ jobs:
           retention-days: 1
   # ===== BUILD ALL MICROSERVICES =====
   build-all:
+    needs: build-commons
     runs-on: ubuntu-latest
 
     strategy:
