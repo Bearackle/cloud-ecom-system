@@ -14,6 +14,48 @@ env:
   NAMESPACE: ecom
 
 jobs:
+  # ===== BUILD COMMONS LIBRARY FIRST =====
+  build-commons:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Install Baidu FSG Library
+        run: |
+            echo "===== Installing Baidu FSG to local Maven repo ====="
+            mvn install:install-file \
+              -Dfile=libs/uid-generator-1.0.0-SNAPSHOT.jar \
+              -DgroupId=com.baidu \
+              -DartifactId=fsg \
+              -Dversion=1.0.0 \
+              -Dpackaging=jar \
+              -DgeneratePom=true
+            
+            echo "✅ Baidu FSG installed"
+
+
+      - name: Build and Install Commons
+        working-directory: ./commons  # hoặc ./services/commons
+        run: |
+          echo "===== Building commons library ====="
+          mvn clean install -DskipTests
+          echo "✅ Commons installed to local Maven repository"
+
+      - name: Upload Commons Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: commons-jar
+          path: commons/target/*.jar
+          retention-days: 1
   # ===== BUILD ALL MICROSERVICES =====
   build-all:
     runs-on: ubuntu-latest
