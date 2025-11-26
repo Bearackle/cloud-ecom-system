@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: product-service
-          image: ecomsystem01.azurecr.io/product-service:latest
+          image: ecomsystem01.azurecr.io/product-service
           ports:
             - containerPort: 8305
               name: http

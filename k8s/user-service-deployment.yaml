@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: user-service
-          image: ecomsystem01.azurecr.io/user-service:latest
+          image: ecomsystem01.azurecr.io/user-service
           ports:
             - containerPort: 8302
               name: http
