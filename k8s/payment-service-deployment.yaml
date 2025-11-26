@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: payment-service
-          image: ecomsystem01.azurecr.io/payment-service
+          image: ecomsystem01.azurecr.io/payment-service:PLACEHOLDER
           ports:
             - containerPort: 8307
               name: http

@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: registry-server
-          image: ecomsystem01.azurecr.io/registry-server
+          image: ecomsystem01.azurecr.io/registry-server:PLACEHOLDER
           ports:
             - containerPort: 8301
               name: http
