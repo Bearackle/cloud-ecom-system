@@ -1,0 +1,92 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-service
+  namespace: ecom
+  labels:
+    app: auth-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth-service
+  template:
+    metadata:
+      labels:
+        app: auth-service
+    spec:
+      containers:
+        - name: auth-service
+          image: ecomsystem01.azurecr.io/auth-service-image:latest
+          ports:
+            - containerPort: 8304
+              name: http
+          env:
+            - name: REGISTRY_HOST
+              value: "registry-server"
+            - name: HOST_ADDR
+              value: "auth-service"
+            - name: DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: DB_HOST
+            - name: DATASOURCE_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: DB_HOST
+            - name: ID_SERVICE_USER
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: PG_HOST_USER
+            - name: ID_SERVICE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: PG_HOST_PASSWORD
+            - name: AUTH_SERVICE_USER
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: AUTH_USER
+            - name: AUTH_SERVICE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: AUTH_USER_PASSWORD
+            - name: TOKEN_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: TOKEN_SECRET
+            - name: CONNECTION_TOPIC_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: CONNECTION_TOPIC_STRING
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-service
+  namespace: ecom
+  labels:
+    app: auth-service
+spec:
+  selector:
+    app: auth-service
+  ports:
+    - port: 8304
+      targetPort: 8304
+      protocol: TCP
+      name: http
+  type: ClusterIP
