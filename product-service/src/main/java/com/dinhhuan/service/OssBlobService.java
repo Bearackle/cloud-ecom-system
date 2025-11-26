@@ -1,6 +1,5 @@
 package com.dinhhuan.service;
 
-import com.dinhhuan.dto.ImageDto;
 import com.dinhhuan.dto.OssImageDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
