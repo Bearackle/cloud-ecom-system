@@ -4,6 +4,7 @@ import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.BlobServiceClientBuilder;
+import com.azure.storage.blob.models.BlobHttpHeaders;
 import com.baidu.fsg.uid.impl.DefaultUidGenerator;
 import com.dinhhuan.dto.OssImageDto;
 import com.dinhhuan.model.ImageBlob;
@@ -53,8 +54,11 @@ public class OssBlobServiceImpl implements OssBlobService {
         }
         String fileName = UUID.randomUUID() + "-" + file.getOriginalFilename();
         try {
+            BlobHttpHeaders headers = new BlobHttpHeaders()
+                    .setContentType("image/jpeg");
             BlobClient blobClient = containerClient.getBlobClient(fileName);
             blobClient.upload(file.getInputStream(), file.getSize(), true);
+            blobClient.setHttpHeaders(headers);
             ImageBlob image = new ImageBlob();
             image.setId(uid.getUID());
             image.setUrl(blobClient.getBlobUrl());

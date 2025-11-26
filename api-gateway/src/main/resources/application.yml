@@ -71,11 +71,13 @@ secure:
           - /druid/**
           - /auth/login
           - /auth/register
-          - /categories
-          - /brands
-          - /products
+          - /categories/**
+          - /brands/**
+          - /products/**
+          - /variants/**
           - /payments/return-callback
           - /actuator/**
+          - /images/**
 logging:
     level:
         org.springframework.cloud.gateway: DEBUG
