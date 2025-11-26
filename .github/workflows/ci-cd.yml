@@ -51,7 +51,7 @@ jobs:
           echo "✅ Commons installed to local Maven repository"
 
       - name: Upload Commons Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: commons-jar
           path: commons/target/*.jar
