@@ -93,4 +93,48 @@ public class ProductController {
         }
         return ResponseEntity.ok(productRef);
     }
+    @RequestMapping(value = "top-deals", method = RequestMethod.GET)
+    public ResponseEntity<List<ProductSimpleDto>> getProductTopDeal(){
+        var products = productService.getProductTopDeal();
+        if(products == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return ResponseEntity.ok(products);
+    }
+    @RequestMapping(value = "/category/{id}", method = RequestMethod.GET)
+    public ResponseEntity<PageResponse<ProductSimpleDto>> getProducts(
+            @PathVariable String id,
+            @RequestParam(name = "_page", defaultValue = "1") int page,
+            @RequestParam(name = "_perPage", defaultValue = "10") int perPage,
+            @RequestParam(name = "_sort", defaultValue = "id") String sort,
+            @RequestParam(name = "_order", defaultValue = "ASC") String order
+    )
+    {
+        Pageable pageable = PageRequest.of(
+                page - 1,
+                perPage,
+                order.equalsIgnoreCase("ASC") ? Sort.Direction.ASC : Sort.Direction.DESC,
+                sort
+        );
+        Page<ProductSimpleDto> productList = productService.getProductByCategory(pageable,Long.valueOf(id));
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Range", String.format("brands %d-%d/%d",
+                (page - 1) * perPage,
+                Math.min(page * perPage - 1, (int) productList.getTotalElements() - 1),
+                productList.getTotalElements()
+        ));
+        PageResponse<ProductSimpleDto> response = new PageResponse<>(
+                productList.getContent(),
+                MetaPageResponse.builder()
+                        .page(page)
+                        .perPage(perPage)
+                        .totalElements(productList.getTotalElements())
+                        .totalPages(productList.getTotalPages())
+                        .build()
+        );
+        System.out.println(productList.stream().count());
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(response);
+    }
 }

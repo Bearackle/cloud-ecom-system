@@ -161,4 +161,30 @@ public class ProductServiceImpl implements ProductService {
                         .build())
                 .toList();
     }
+    @Override
+    public List<ProductSimpleDto> getProductTopDeal() {
+        return productRepository.findTop5ByOrderByPriceAsc()
+                .stream().map( p ->
+                        ProductSimpleDto.builder()
+                                .id(p.getId())
+                                .productName(p.getProductName())
+                                .price(p.getPrice())
+                                .imageUrl(p.getImages().getFirst().getImgUrls())
+                                .build()
+                ).toList();
+    }
+
+    @Override
+    public Page<ProductSimpleDto> getProductByCategory(Pageable page, Long category) {
+        return productRepository.findAllByCategory_Id(category
+                , page)
+                .map(
+                        p -> ProductSimpleDto.builder()
+                                .id(p.getId())
+                                .productName(p.getProductName())
+                                .price(p.getPrice())
+                                .imageUrl(p.getImages().getFirst().getImgUrls())
+                                .build()
+                );
+    }
 }
