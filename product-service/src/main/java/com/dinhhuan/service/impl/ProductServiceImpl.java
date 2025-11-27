@@ -174,7 +174,9 @@ public class ProductServiceImpl implements ProductService {
                                 .id(p.getId())
                                 .productName(p.getProductName())
                                 .price(p.getPrice())
-                                .imageUrl(p.getImages().getFirst().getImgUrls())
+                                .imageUrl(p.getImages().isEmpty()
+                                        ? "https://res.cloudinary.com/dy093zxdg/image/upload/v1764226029/no-xplode_Image_01_skffnl.jpg"
+                                        : p.getImages().getFirst().getImgUrls())
                                 .build()
                 ).toList();
     }
@@ -188,8 +190,9 @@ public class ProductServiceImpl implements ProductService {
                                 .id(p.getId())
                                 .productName(p.getProductName())
                                 .price(p.getPrice())
-                                .imageUrl(p.getImages().getFirst().getImgUrls())
-                                .build()
+                                .imageUrl(p.getImages().isEmpty()
+                                        ? "https://res.cloudinary.com/dy093zxdg/image/upload/v1764226029/no-xplode_Image_01_skffnl.jpg"
+                                        : p.getImages().getFirst().getImgUrls())                                .build()
                 );
     }
 }
