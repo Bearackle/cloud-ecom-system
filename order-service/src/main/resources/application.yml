@@ -82,4 +82,4 @@ eureka:
 
 payment:
     service:
-        url: http://${PAYMENT_HOST:localhost}:8307
+        url: http://${PAYMENT_HOST:localhost:8307}
