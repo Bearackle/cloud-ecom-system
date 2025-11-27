@@ -191,7 +191,7 @@ public class OrderServiceImpl implements OrderService {
             ProductVariant variant = variantRepository.findById(cartItem.getVariant().getId()).orElse(null);
             if (variant == null) continue;
             variant.setPrice(variant.getPrice() == null ? 0 : variant.getPrice());
-            Long itemPrice = variant.getPrice() * cartItem.getQuantity();
+            Long itemPrice = variant.getPrice();
             Item item = Item.builder()
                     .id(uidGenerator.getUID())
                     .order(order)
@@ -209,7 +209,7 @@ public class OrderServiceImpl implements OrderService {
         long total = 0;
         for (Item item : items) {
             if (item.getPrice() != null) {
-                total += item.getPrice();
+                total += item.getPrice() * item.getQuantity();
             }
         }
         return total;
