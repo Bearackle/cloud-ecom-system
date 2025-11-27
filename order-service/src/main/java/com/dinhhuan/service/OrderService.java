@@ -17,4 +17,5 @@ public interface OrderService {
     OrderResponse changeStatus(Long id, Integer status);
     OrderResponseDetails getOrderByIdIncluded(Long id);
     List<OrderHistoryDto> getAllHistoryUserOrder(Long userId);
+    void patchEmailPaymentConfirmation(Long orderId);
 }

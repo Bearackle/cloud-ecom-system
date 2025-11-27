@@ -18,6 +18,7 @@ public class ConsumerPaymentSuccessHandler {
     public Consumer<Long> consumerSuccessPayment(){
         return orderId ->{
             orderService.changeStatus(orderId, OrderStatus.PAID.ordinal());
+            orderService.patchEmailPaymentConfirmation(orderId);
         };
     }
 }
