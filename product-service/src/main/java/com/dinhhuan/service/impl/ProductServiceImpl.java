@@ -147,7 +147,7 @@ public class ProductServiceImpl implements ProductService {
                     productEdit.getImages()
                             .stream()
                             .map(img -> Image.builder()
-                                    .id(img.getId())
+                                    .id(img.getId() == null ? uidGenerator.getUID() : img.getId())
                                     .imgUrls(img.getImgUrl())
                                     .product(product)
                                     .build()

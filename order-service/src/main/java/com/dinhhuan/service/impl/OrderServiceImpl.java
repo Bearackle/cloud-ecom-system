@@ -111,6 +111,7 @@ public class OrderServiceImpl implements OrderService {
                                                 .variantId(i.getVariant().getId())
                                                 .quantity(i.getQuantity())
                                                 .imgUrl(i.getVariant().getImgUrl())
+                                                .price(i.getPrice())
                                                 .variantName(i.getVariant().getName()
                                                 ).build()
                                 ).toList()
@@ -147,14 +148,16 @@ public class OrderServiceImpl implements OrderService {
                                 .price(i.getPrice())
                                 .quantity(i.getQuantity())
                                 .variantId(i.getVariant().getId())
+                                .variantName(i.getVariant().getName())
                                 .orderId(order.getId())
+                                .imgUrl(i.getVariant().getImgUrl())
                                 .build())
                         .toList()
                 ).build();
     }
     @Override
     public List<OrderHistoryDto> getAllHistoryUserOrder(Long userId) {
-         return orderRepository.findAllByUser_Id(userId)
+         return orderRepository.findAllByUser_IdOrderByOrderDateDesc(userId)
                  .stream()
                  .map(o -> OrderHistoryDto.builder()
                          .id(o.getId())
