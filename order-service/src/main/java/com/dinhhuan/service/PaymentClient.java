@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @Component
-@FeignClient(name = "payment-service", url = "${payment.service.url}")
+@FeignClient(name = "payment-service")
 public interface PaymentClient {
     @PostMapping("/payments/generate-url")
     PaymentUrlResponse generatePaymentUrl(@RequestBody PaymentRequest request);
