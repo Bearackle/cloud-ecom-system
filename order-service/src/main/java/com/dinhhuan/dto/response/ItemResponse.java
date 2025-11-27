@@ -18,7 +18,9 @@ public class ItemResponse {
     private Long orderId;
     @JsonSerialize(using = ToStringSerializer.class)
     private Long variantId;
+    private String variantName;
     private Integer quantity;
+    private String imgUrl;
     private Long price;
 }
 
