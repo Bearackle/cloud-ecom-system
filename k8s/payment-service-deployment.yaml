@@ -22,6 +22,8 @@ spec:
             - containerPort: 8307
               name: http
           env:
+            - name: TZ
+              value: "Asia/Ho_Chi_Minh"
             - name: REGISTRY_HOST
               value: "registry-server"
             - name: HOST_ADDR
