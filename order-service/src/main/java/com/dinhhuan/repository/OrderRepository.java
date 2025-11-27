@@ -20,4 +20,6 @@ public interface OrderRepository extends JpaRepository<Order, Long>{
     Optional<Order> findOrderDetailsIncluded(Long id);
     @EntityGraph(attributePaths = {"items", "address"})
     List<Order> findAllByUser_Id(Long userId);
+    @Query("SELECT o FROM Order o LEFT JOIN FETCH o.user u LEFT JOIN FETCH o.address a where o.id = :id")
+    Order findByOrderIdIncludeUserAddress(Long id);
 }

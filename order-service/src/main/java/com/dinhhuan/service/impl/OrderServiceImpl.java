@@ -3,12 +3,14 @@ package com.dinhhuan.service.impl;
 import com.baidu.fsg.uid.impl.DefaultUidGenerator;
 import com.dinhhuan.common.AppEx;
 import com.dinhhuan.dto.request.CreateOrderDto;
+import com.dinhhuan.dto.request.OrderConfirmMessage;
 import com.dinhhuan.dto.request.OrderRequest;
 import com.dinhhuan.dto.request.PaymentRequest;
 import com.dinhhuan.dto.response.*;
 import com.dinhhuan.enums.OrderStatus;
 import com.dinhhuan.model.*;
 import com.dinhhuan.producer.CreateOrderEvent;
+import com.dinhhuan.producer.OrderConfirmationEvent;
 import com.dinhhuan.repository.CartItemRepository;
 import com.dinhhuan.repository.OrderRepository;
 import com.dinhhuan.repository.VariantRepository;
@@ -34,6 +36,7 @@ public class OrderServiceImpl implements OrderService {
     private final DefaultUidGenerator uidGenerator;
     private final CreateOrderEvent createOrderEvent;
     private final PaymentClient paymentClient;
+    private final OrderConfirmationEvent emailEvent;
     @Override
     public String createOrder(OrderRequest orderRequest) {
         List<CartItem> cartItems = cartItemRepository.findByUserId(orderRequest.getUserId());
@@ -216,4 +219,21 @@ public class OrderServiceImpl implements OrderService {
                 .build();
     }
 
+    @Override
+    public void patchEmailPaymentConfirmation(Long orderId) {
+        var order = orderRepository.findByOrderIdIncludeUserAddress(orderId);
+        if(order == null) {
+            return;
+        }
+        OrderConfirmMessage dto = OrderConfirmMessage.builder()
+                .orderId(String.valueOf(
+                        orderId))
+                .email(order.getUser().getEmail())
+                .phone(order.getUser().getPhone())
+                .address(order.getAddress().getLocation())
+                .createDate(order.getOrderDate())
+                .status(OrderStatus.fromCode(order.getStatus()))
+                .build();
+        emailEvent.sendMessage(dto);
+    }
 }

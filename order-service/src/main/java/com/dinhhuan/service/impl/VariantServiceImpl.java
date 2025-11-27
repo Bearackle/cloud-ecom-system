@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class VariantServiceImpl implements VariantService {
     private final VariantRepository variantRepository;
-    private final DefaultUidGenerator uid;
     @Override
     public Long createOrUpdate(VariantSyncDto variantCreation) {
         var entity = variantRepository.findById(variantCreation.getId()).orElse(
