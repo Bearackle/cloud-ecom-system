@@ -85,6 +85,8 @@ spec:
               value: "https://dinhhuan.id.vn/payments/momo-callback"
             - name: MOMO_NOTIFY_URL
               value: "https://dinhhuan.id.vn/payments/momo-callback"
+            - name: FRONTEND_REDIRECT
+              value: "https://4hprotein.store/"
           resources:
             requests:
               memory: "512Mi"

@@ -94,10 +94,28 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Page<OrderResponse> getAllOrders(Pageable pageable) {
+    public Page<OrderHistoryDto> getAllOrders(Pageable pageable) {
        Page<Order> orders = orderRepository.findAll(pageable);
         return orders
-                .map(this::toDto);
+                .map(o -> OrderHistoryDto.builder()
+                        .id(o.getId())
+                        .addressDetail(o.getAddress().getLocation())
+                        .createdDate(o.getOrderDate())
+                        .totalAmount(o.getTotalAmount())
+                        .note(o.getNote())
+                        .status(OrderStatus.fromCode(o.getStatus()))
+                        .products(
+                                o.getItems().stream().map(
+                                        i -> ItemHistoryDto.builder()
+                                                .id(i.getId())
+                                                .variantId(i.getVariant().getId())
+                                                .quantity(i.getQuantity())
+                                                .imgUrl(i.getVariant().getImgUrl())
+                                                .variantName(i.getVariant().getName()
+                                                ).build()
+                                ).toList()
+                        ).build()
+                );
     }
     @Override
     public OrderResponse changeStatus(Long id, Integer status) {

@@ -13,7 +13,7 @@ public interface OrderService {
     String createOrder(OrderRequest orderRequest);
     OrderResponse getOrderById(Long id);
     List<OrderResponse> getAllUserOrder(Long userId);
-    Page<OrderResponse> getAllOrders(Pageable pageable);
+    Page<OrderHistoryDto> getAllOrders(Pageable pageable);
     OrderResponse changeStatus(Long id, Integer status);
     OrderResponseDetails getOrderByIdIncluded(Long id);
     List<OrderHistoryDto> getAllHistoryUserOrder(Long userId);
