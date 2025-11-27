@@ -94,16 +94,16 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: order-service
+  name: payment-service
   namespace: ecom
   labels:
-    app: order-service
+    app: payment-service
 spec:
   selector:
-    app: order-service
+    app: payment-service
   ports:
-    - port: 8306
-      targetPort: 8306
+    - port: 8307
+      targetPort: 8307
       protocol: TCP
       name: http
   type: ClusterIP
