@@ -35,7 +35,7 @@ public class OrderController {
        return ResponseEntity.ok(Map.of("payUrl", url));
     }
     @RequestMapping(name = "", method = RequestMethod.GET)
-    public ResponseEntity<List<OrderResponse>> getAllOrders(
+    public ResponseEntity<List<OrderHistoryDto>> getAllOrders(
             @RequestParam(name = "_page", defaultValue = "1") int page,
             @RequestParam(name = "_perPage", defaultValue = "10") int perPage,
             @RequestParam(name = "_sort", defaultValue = "id") String sort,
@@ -48,7 +48,7 @@ public class OrderController {
                 order.equalsIgnoreCase("ASC") ? Sort.Direction.ASC : Sort.Direction.DESC,
                 sort
         );
-        Page<OrderResponse> orderList = orderService.getAllOrders(pageable);
+        Page<OrderHistoryDto> orderList = orderService.getAllOrders(pageable);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Range", String.format("orders %d-%d/%d",
                 (page - 1) * perPage,

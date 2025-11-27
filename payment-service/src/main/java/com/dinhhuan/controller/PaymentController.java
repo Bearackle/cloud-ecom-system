@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.HashMap;
 import java.util.List;
@@ -57,7 +58,7 @@ public class PaymentController {
         return ResponseEntity.ok(ls);
     }
     @GetMapping("/return-callback")
-    public ResponseEntity<String> getReturnPayments(HttpServletRequest request){
+    public RedirectView getReturnPayments(HttpServletRequest request){
         Map<String, String> fields = new TreeMap<>();
         request.getParameterMap().forEach((key, value) -> {
             if (value.length > 0) fields.put(key, value[0]);
@@ -65,31 +66,31 @@ public class PaymentController {
         String secureHash = fields.remove("vnp_SecureHash");
         String signValue = VNPayUtil.hashAllFields(fields, vnp_HashSecret);
         if (!secureHash.equals(signValue)) {
-            return ResponseEntity.badRequest().body("Invalid signature");
+            return new RedirectView(frontendRedirect);
         }
         String responseCode = fields.get("vnp_ResponseCode");
         String orderId = fields.get("vnp_OrderInfo");
         if ("00".equals(responseCode)) {
             var p = paymentService.getPayment(Long.parseLong(orderId));
             if(p == null){
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+                return new RedirectView(frontendRedirect);
             }
             p.setStatus(PaymentStatus.PAID);
             paymentService.updateStatus(p.getId(),p);
             System.out.println("thanh toan thanh cong");
             //event success
             paymentSuccessProducer.sendMessage(Long.parseLong(orderId));
-            return ResponseEntity.ok("Payment success");
+            return new RedirectView(frontendRedirect);
         } else {
             var p = paymentService.getPayment(Long.parseLong(orderId));
             if(p == null){
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+                return new RedirectView(frontendRedirect);
             }
             p.setStatus(PaymentStatus.CANCELLED);
             paymentService.updateStatus(p.getId(),p);
             //event
             paymentFailedProducer.sendMessage(Long.parseLong(orderId));
-            return ResponseEntity.ok("Payment failed: " + responseCode);
+            return new RedirectView(frontendRedirect);
         }
     }
 
