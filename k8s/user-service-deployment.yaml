@@ -82,7 +82,7 @@ metadata:
     app: user-service
     version: green
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       app: user-service
