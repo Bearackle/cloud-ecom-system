@@ -5,7 +5,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: auth-service-blue
+  name: auth-service
   namespace: ecom
   labels:
     app: auth-service
