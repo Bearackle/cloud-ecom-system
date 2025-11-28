@@ -1,34 +1,34 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: user-service-green
+  name: product-service
   namespace: ecom
   labels:
-    app: user-service
-    version: green
+    app: product-service
+    version: blue
 spec:
-  replicas: 0
+  replicas: 1
   selector:
     matchLabels:
-      app: user-service
-      version: green
+      app: product-service
+      version: blue
   template:
     metadata:
       labels:
-        app: user-service
-        version: green
+        app: product-service
+        version: blue
     spec:
       containers:
-        - name: user-service
-          image: ecomsystem01.azurecr.io/user-service:PLACEHOLDER
+        - name: product-service
+          image: ecomsystem01.azurecr.io/product-service:PLACEHOLDER
           ports:
-            - containerPort: 8302
+            - containerPort: 8305
               name: http
           env:
             - name: REGISTRY_HOST
               value: "registry-server"
             - name: HOST_ADDR
-              value: "user-service"
+              value: "product-service"
             - name: DB_HOST
               valueFrom:
                 secretKeyRef:
@@ -49,18 +49,36 @@ spec:
                 secretKeyRef:
                   name: app-secrets
                   key: PG_HOST_PASSWORD
-            - name: USR_SERVICE_USERNAME
-              value: "usr-service"
-            - name: USR_SERVICE_PASSWORD
+            - name: PRODUCT_SERVICE_USERNAME
               valueFrom:
                 secretKeyRef:
                   name: app-secrets
-                  key: USR_SERVICE_PASSWORD
+                  key: PRODUCT_SERVICE_USERNAME
+            - name: PRODUCT_SERVICE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: PRODUCT_SERVICE_PASSWORD
             - name: CONNECTION_TOPIC_STRING
               valueFrom:
                 secretKeyRef:
                   name: app-secrets
                   key: CONNECTION_TOPIC_STRING
+            - name: STORAGE_ACCOUNT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: STORAGE_ACCOUNT_KEY
+            - name: STORAGE_ACCOUNT_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: STORAGE_ACCOUNT_NAME
+            - name: STORAGE_CONTAINER_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: STORAGE_CONTAINER_NAME
           resources:
             requests:
               memory: "512Mi"
@@ -72,19 +90,19 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: user-service
+  name: product-service
   namespace: ecom
   labels:
-    app: user-service
+    app: product-service
   annotations:
     active-version: "blue"
 spec:
   selector:
-    app: user-service
+    app: product-service
     version: blue
   ports:
-    - port: 8302
-      targetPort: 8302
+    - port: 8305
+      targetPort: 8305
       protocol: TCP
       name: http
   type: ClusterIP

@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: user-service-green
+  name: user-service
   namespace: ecom
   labels:
     app: user-service
-    version: green
+    version: blue
 spec:
-  replicas: 0
+  replicas: 1
   selector:
     matchLabels:
       app: user-service
-      version: green
+      version: blue
   template:
     metadata:
       labels:
         app: user-service
-        version: green
+        version: blue
     spec:
       containers:
         - name: user-service
@@ -69,6 +69,7 @@ spec:
               memory: "1Gi"
               cpu: "500m"
 ---
+
 apiVersion: v1
 kind: Service
 metadata:
