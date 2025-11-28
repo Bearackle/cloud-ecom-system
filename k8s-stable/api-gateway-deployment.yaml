@@ -1,11 +1,11 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: api-gateway-green
+  name: api-gateway
   namespace: ecom
   labels:
     app: api-gateway
-    version: green
+    version: blue
 spec:
   replicas: 1  # 2 instances cho high availability
   selector:
@@ -15,11 +15,11 @@ spec:
     metadata:
       labels:
         app: api-gateway
-        version: green
+        version: blue
     spec:
       containers:
         - name: api-gateway
-          image: ecomsystem01.azurecr.io/api-gateway:PLACEHOLDER
+          image: ecomsystem01.azurecr.io/api-gateway:
           imagePullPolicy: Always
           ports:
             - containerPort: 8303
@@ -76,9 +76,9 @@ spec:
       protocol: TCP
       name: http
 
-## ============================================
-## API GATEWAY - Blue-Green Deployment
-## ============================================
+# ============================================
+# API GATEWAY - Blue-Green Deployment
+# ============================================
 #---
 #apiVersion: apps/v1
 #kind: Deployment
