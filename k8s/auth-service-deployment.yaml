@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: auth-service-green
+  name: auth-service
   namespace: ecom
   labels:
     app: auth-service

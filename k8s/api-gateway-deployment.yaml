@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: api-gateway-green
+  name: api-gateway
   namespace: ecom
   labels:
     app: api-gateway

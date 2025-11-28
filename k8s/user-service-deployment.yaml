@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: user-service-green
+  name: user-service
   namespace: ecom
   labels:
     app: user-service

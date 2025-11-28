@@ -107,7 +107,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: product-service-green
+  name: product-service
   namespace: ecom
   labels:
     app: product-service
