@@ -1,16 +1,61 @@
+# ============================================
+# API GATEWAY - Blue-Green Deployment
+# ============================================
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: api-gateway
+  name: api-gateway-blue
+  namespace: ecom
+  labels:
+    app: api-gateway
+    version: blue
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api-gateway
+      version: blue
+  template:
+    metadata:
+      labels:
+        app: api-gateway
+        version: blue
+    spec:
+      containers:
+        - name: api-gateway
+          image: ecomsystem01.azurecr.io/api-gateway:PLACEHOLDER
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8303
+              name: http
+          env:
+            - name: REGISTRY_HOST
+              value: "registry-server"
+            - name: HOST_ADDR
+              value: "registry-server"
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-gateway-green
   namespace: ecom
   labels:
     app: api-gateway
     version: green
 spec:
-  replicas: 1  # 2 instances cho high availability
+  replicas: 1
   selector:
     matchLabels:
       app: api-gateway
+      version: green
   template:
     metadata:
       labels:
@@ -24,7 +69,6 @@ spec:
           ports:
             - containerPort: 8303
               name: http
-              protocol: TCP
           env:
             - name: REGISTRY_HOST
               value: "registry-server"
@@ -37,7 +81,6 @@ spec:
             limits:
               memory: "1Gi"
               cpu: "500m"
-
 ---
 apiVersion: v1
 kind: Service
@@ -50,15 +93,14 @@ spec:
   type: ClusterIP
   selector:
     app: api-gateway
+    # version selector sẽ được CI/CD tự động add/update
   ports:
     - port: 8303
       targetPort: 8303
       protocol: TCP
       name: http
-  sessionAffinity: ClientIP  # Sticky sessions nếu cần
-
+  sessionAffinity: ClientIP
 ---
-# LoadBalancer Service (để expose ra ngoài)
 apiVersion: v1
 kind: Service
 metadata:
@@ -70,129 +112,9 @@ spec:
   type: LoadBalancer
   selector:
     app: api-gateway
+    # version selector sẽ được CI/CD tự động add/update
   ports:
     - port: 80
       targetPort: 8303
       protocol: TCP
       name: http
-
-## ============================================
-## API GATEWAY - Blue-Green Deployment
-## ============================================
-#---
-#apiVersion: apps/v1
-#kind: Deployment
-#metadata:
-#  name: api-gateway
-#  namespace: ecom
-#  labels:
-#    app: api-gateway
-#    version: blue
-#spec:
-#  replicas: 1
-#  selector:
-#    matchLabels:
-#      app: api-gateway
-#      version: blue
-#  template:
-#    metadata:
-#      labels:
-#        app: api-gateway
-#        version: blue
-#    spec:
-#      containers:
-#        - name: api-gateway
-#          image: ecomsystem01.azurecr.io/api-gateway:PLACEHOLDER
-#          imagePullPolicy: Always
-#          ports:
-#            - containerPort: 8303
-#              name: http
-#          env:
-#            - name: REGISTRY_HOST
-#              value: "registry-server"
-#            - name: HOST_ADDR
-#              value: "registry-server"
-#          resources:
-#            requests:
-#              memory: "512Mi"
-#              cpu: "250m"
-#            limits:
-#              memory: "1Gi"
-#              cpu: "500m"
-#---
-#apiVersion: apps/v1
-#kind: Deployment
-#metadata:
-#  name: api-gateway-green
-#  namespace: ecom
-#  labels:
-#    app: api-gateway
-#    version: green
-#spec:
-#  replicas: 0
-#  selector:
-#    matchLabels:
-#      app: api-gateway
-#      version: green
-#  template:
-#    metadata:
-#      labels:
-#        app: api-gateway
-#        version: green
-#    spec:
-#      containers:
-#        - name: api-gateway
-#          image: ecomsystem01.azurecr.io/api-gateway:PLACEHOLDER
-#          imagePullPolicy: Always
-#          ports:
-#            - containerPort: 8303
-#              name: http
-#          env:
-#            - name: REGISTRY_HOST
-#              value: "registry-server"
-#            - name: HOST_ADDR
-#              value: "registry-server"
-#          resources:
-#            requests:
-#              memory: "512Mi"
-#              cpu: "250m"
-#            limits:
-#              memory: "1Gi"
-#              cpu: "500m"
-#---
-#apiVersion: v1
-#kind: Service
-#metadata:
-#  name: api-gateway
-#  namespace: ecom
-#  labels:
-#    app: api-gateway
-#spec:
-#  type: ClusterIP
-#  selector:
-#    app: api-gateway
-#    # version selector sẽ được CI/CD tự động add/update
-#  ports:
-#    - port: 8303
-#      targetPort: 8303
-#      protocol: TCP
-#      name: http
-#  sessionAffinity: ClientIP
-#---
-#apiVersion: v1
-#kind: Service
-#metadata:
-#  name: api-gateway-external
-#  namespace: ecom
-#  labels:
-#    app: api-gateway
-#spec:
-#  type: LoadBalancer
-#  selector:
-#    app: api-gateway
-#    # version selector sẽ được CI/CD tự động add/update
-#  ports:
-#    - port: 80
-#      targetPort: 8303
-#      protocol: TCP
-#      name: http
