@@ -1,13 +1,88 @@
+# ============================================
+# USER SERVICE - Blue-Green Deployment
+# ============================================
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: user-service
+  name: user-service-blue
+  namespace: ecom
+  labels:
+    app: user-service
+    version: blue
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-service
+      version: blue
+  template:
+    metadata:
+      labels:
+        app: user-service
+        version: blue
+    spec:
+      containers:
+        - name: user-service
+          image: ecomsystem01.azurecr.io/user-service:PLACEHOLDER
+          ports:
+            - containerPort: 8302
+              name: http
+          env:
+            - name: REGISTRY_HOST
+              value: "registry-server"
+            - name: HOST_ADDR
+              value: "user-service"
+            - name: DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: DB_HOST
+            - name: DATASOURCE_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: DB_HOST
+            - name: ID_SERVICE_USER
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: PG_HOST_USER
+            - name: ID_SERVICE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: PG_HOST_PASSWORD
+            - name: USR_SERVICE_USERNAME
+              value: "usr-service"
+            - name: USR_SERVICE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: USR_SERVICE_PASSWORD
+            - name: CONNECTION_TOPIC_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: CONNECTION_TOPIC_STRING
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-service-green
   namespace: ecom
   labels:
     app: user-service
     version: green
 spec:
-  replicas: 0
+  replicas: 1
   selector:
     matchLabels:
       app: user-service
@@ -76,12 +151,10 @@ metadata:
   namespace: ecom
   labels:
     app: user-service
-  annotations:
-    active-version: "blue"
 spec:
   selector:
     app: user-service
-    version: blue
+    # version selector sẽ được CI/CD tự động add/update
   ports:
     - port: 8302
       targetPort: 8302

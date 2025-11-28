@@ -1,13 +1,96 @@
+# ============================================
+# AUTH SERVICE - Blue-Green Deployment
+# ============================================
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: auth-service
+  name: auth-service-blue
+  namespace: ecom
+  labels:
+    app: auth-service
+    version: blue
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth-service
+      version: blue
+  template:
+    metadata:
+      labels:
+        app: auth-service
+        version: blue
+    spec:
+      containers:
+        - name: auth-service
+          image: ecomsystem01.azurecr.io/auth-service:PLACEHOLDER
+          ports:
+            - containerPort: 8304
+              name: http
+          env:
+            - name: REGISTRY_HOST
+              value: "registry-server"
+            - name: HOST_ADDR
+              value: "auth-service"
+            - name: DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: DB_HOST
+            - name: DATASOURCE_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: DB_HOST
+            - name: ID_SERVICE_USER
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: PG_HOST_USER
+            - name: ID_SERVICE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: PG_HOST_PASSWORD
+            - name: AUTH_SERVICE_USER
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: AUTH_USER
+            - name: AUTH_SERVICE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: AUTH_USER_PASSWORD
+            - name: TOKEN_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: TOKEN_SECRET
+            - name: CONNECTION_TOPIC_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: CONNECTION_TOPIC_STRING
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-service-green
   namespace: ecom
   labels:
     app: auth-service
     version: green
 spec:
-  replicas: 0
+  replicas: 1
   selector:
     matchLabels:
       app: auth-service
@@ -84,12 +167,10 @@ metadata:
   namespace: ecom
   labels:
     app: auth-service
-  annotations:
-    active-version: "blue"
 spec:
   selector:
     app: auth-service
-    version: blue
+    # version selector sẽ được CI/CD tự động add/update
   ports:
     - port: 8304
       targetPort: 8304
