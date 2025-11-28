@@ -593,28 +593,50 @@ jobs:
               DEPLOYMENT_NAME="${service}"
             fi
           
-            # First, apply the full deployment file (ensures both blue and green exist)
-            kubectl apply -f k8s/${service}-deployment.yaml -n ${{ env.NAMESPACE }}
+            # Check if deployments already exist
+            if kubectl get deployment $DEPLOYMENT_NAME -n ${{ env.NAMESPACE }} &> /dev/null; then
+              echo "✓ Deployment $DEPLOYMENT_NAME already exists"
           
-            # Update image for inactive deployment ONLY
-            kubectl set image deployment/$DEPLOYMENT_NAME \
-              ${service}=${{ env.ACR_LOGIN_SERVER }}/${service}:${{ env.IMAGE_TAG }} \
-              -n ${{ env.NAMESPACE }}
+              # Just update the image
+              kubectl set image deployment/$DEPLOYMENT_NAME \
+                ${service}=${{ env.ACR_LOGIN_SERVER }}/${service}:${{ env.IMAGE_TAG }} \
+                -n ${{ env.NAMESPACE }}
+          
+            else
+              echo "⚠️  Deployment $DEPLOYMENT_NAME does not exist, creating from file..."
+          
+              # Replace PLACEHOLDER with actual image tag in the YAML file
+              sed "s|image: ${{ env.ACR_LOGIN_SERVER }}/${service}:PLACEHOLDER|image: ${{ env.ACR_LOGIN_SERVER }}/${service}:${{ env.IMAGE_TAG }}|g" \
+                k8s/${service}-deployment.yaml > /tmp/${service}-deployment.yaml
+          
+              # Apply the updated file
+              kubectl apply -f /tmp/${service}-deployment.yaml -n ${{ env.NAMESPACE }}
+            fi
           
             # Scale up inactive deployment
             kubectl scale deployment/$DEPLOYMENT_NAME --replicas=1 -n ${{ env.NAMESPACE }}
           
             # Wait for rollout
             echo "⏳ Waiting for $DEPLOYMENT_NAME to be ready..."
-            kubectl rollout status deployment/$DEPLOYMENT_NAME -n ${{ env.NAMESPACE }} --timeout=180s
+            kubectl rollout status deployment/$DEPLOYMENT_NAME -n ${{ env.NAMESPACE }} --timeout=300s
           
             if [ $? -eq 0 ]; then
               echo "✅ $service deployed to $INACTIVE_VERSION successfully"
               echo ""
             else
               echo "❌ $service deployment to $INACTIVE_VERSION failed"
+              echo ""
+              echo "Pod Status:"
               kubectl get pods -n ${{ env.NAMESPACE }} -l app=$service,version=$INACTIVE_VERSION
-              kubectl logs -l app=$service,version=$INACTIVE_VERSION -n ${{ env.NAMESPACE }} --tail=50
+              echo ""
+              echo "Pod Describe:"
+              kubectl describe pod -l app=$service,version=$INACTIVE_VERSION -n ${{ env.NAMESPACE }}
+              echo ""
+              echo "Pod Logs:"
+              kubectl logs -l app=$service,version=$INACTIVE_VERSION -n ${{ env.NAMESPACE }} --tail=100
+              echo ""
+              echo "Events:"
+              kubectl get events -n ${{ env.NAMESPACE }} --sort-by='.lastTimestamp' | grep $service | tail -20
               exit 1
             fi
           done
