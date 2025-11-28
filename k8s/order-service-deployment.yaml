@@ -98,7 +98,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: order-service-blue
+  name: order-service
   namespace: ecom
   labels:
     app: order-service
@@ -183,7 +183,7 @@ metadata:
     app: order-service
     version: green
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       app: order-service

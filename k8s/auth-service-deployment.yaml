@@ -93,7 +93,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: auth-service-blue
+  name: auth-service
   namespace: ecom
   labels:
     app: auth-service
@@ -178,7 +178,7 @@ metadata:
     app: auth-service
     version: green
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       app: auth-service
