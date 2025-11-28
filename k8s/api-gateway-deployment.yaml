@@ -75,6 +75,7 @@
 #      targetPort: 8303
 #      protocol: TCP
 #      name: http
+
 # ============================================
 # API GATEWAY - Blue-Green Deployment
 # ============================================
@@ -166,13 +167,11 @@ metadata:
   namespace: ecom
   labels:
     app: api-gateway
-  annotations:
-    active-version: "blue"
 spec:
   type: ClusterIP
   selector:
     app: api-gateway
-    version: blue
+    # version selector sẽ được CI/CD tự động add/update
   ports:
     - port: 8303
       targetPort: 8303
@@ -187,13 +186,11 @@ metadata:
   namespace: ecom
   labels:
     app: api-gateway
-  annotations:
-    active-version: "blue"
 spec:
   type: LoadBalancer
   selector:
     app: api-gateway
-    version: blue
+    # version selector sẽ được CI/CD tự động add/update
   ports:
     - port: 80
       targetPort: 8303
