@@ -103,7 +103,7 @@ metadata:
     app: order-service
     version: green
 spec:
-  replicas: 0
+  replicas: 1
   selector:
     matchLabels:
       app: order-service
