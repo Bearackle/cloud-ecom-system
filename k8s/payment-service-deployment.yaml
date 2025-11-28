@@ -111,7 +111,7 @@ metadata:
     app: payment-service
     version: green
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       app: payment-service

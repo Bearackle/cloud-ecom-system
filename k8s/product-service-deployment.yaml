@@ -100,7 +100,7 @@ metadata:
     app: product-service
     version: green
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       app: product-service
