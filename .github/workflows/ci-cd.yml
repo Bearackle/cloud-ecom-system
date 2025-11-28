@@ -350,7 +350,6 @@
 #          echo "  kubectl port-forward service/api-gateway 8080:80 -n ${{ env.NAMESPACE }}"
 #          echo ""
 #          echo "========================================="
-
 name: Blue-Green Microservices CI/CD Pipeline
 
 on:
@@ -591,9 +590,39 @@ jobs:
           echo "📦 Will deploy new version to: $TARGET_VERSION"
           echo ""
 
-      - name: Update Deployment Manifests for Target Environment
+      - name: Deploy or Update Services
         run: |
-          echo "===== Updating Deployment Manifests for ${{ steps.determine-target.outputs.target_version }} ====="
+          echo "===== Deploying/Updating Services ====="
+          echo ""
+          
+          TARGET_VERSION="${{ steps.determine-target.outputs.target_version }}"
+          SERVICES=("api-gateway" "auth-service" "user-service" "product-service" "order-service" "payment-service")
+          
+          for service in "${SERVICES[@]}"; do
+            echo "Processing service: $service"
+          
+            # Check if service exists
+            if kubectl get service $service -n ${{ env.NAMESPACE }} &> /dev/null; then
+              echo "  Service exists - will update selector after deployment"
+            else
+              echo "  Service does not exist - will be created from YAML"
+              # Apply service from YAML first
+              kubectl apply -f k8s/${service}-deployment.yaml -n ${{ env.NAMESPACE }} || true
+            fi
+          done
+          
+          # Handle api-gateway-external separately
+          if ! kubectl get service api-gateway-external -n ${{ env.NAMESPACE }} &> /dev/null; then
+            echo "Creating api-gateway-external LoadBalancer..."
+            kubectl apply -f k8s/api-gateway-deployment.yaml -n ${{ env.NAMESPACE }} || true
+          fi
+          
+          echo ""
+          echo "✅ Services prepared"
+
+      - name: Update Target Deployment with New Image
+        run: |
+          echo "===== Updating ${{ steps.determine-target.outputs.target_version }} Deployment Image ====="
           echo ""
           
           TARGET_VERSION="${{ steps.determine-target.outputs.target_version }}"
@@ -603,32 +632,21 @@ jobs:
             DEPLOYMENT_FILE="k8s/${service}-deployment.yaml"
           
             if [ -f "$DEPLOYMENT_FILE" ]; then
-              echo "Processing: $service"
+              echo "Processing: $service-${TARGET_VERSION}"
           
-              # Create temporary file with updated content
-              cat "$DEPLOYMENT_FILE" | \
-                sed "s|name: ${service}$|name: ${service}-${TARGET_VERSION}|g" | \
-                sed "s|name: ${service}-blue|name: ${service}-${TARGET_VERSION}|g" | \
-                sed "s|name: ${service}-green|name: ${service}-${TARGET_VERSION}|g" | \
-                sed "s|app: ${service}$|app: ${service}\n    version: ${TARGET_VERSION}|g" | \
-                sed "/matchLabels:/a\\      version: ${TARGET_VERSION}" | \
-                sed "s|version: blue|version: ${TARGET_VERSION}|g" | \
-                sed "s|version: green|version: ${TARGET_VERSION}|g" | \
-                sed "s|image: ${ACR_LOGIN_SERVER}/${service}:.*|image: ${ACR_LOGIN_SERVER}/${service}:${IMAGE_TAG}|g" \
-                > "${DEPLOYMENT_FILE}.tmp"
+              # Update image tag for target version deployment only
+              # This updates the line with the image for the specific deployment (blue or green)
+              sed -i "/name: ${service}-${TARGET_VERSION}/,/^---/s|image: ${ACR_LOGIN_SERVER}/${service}:.*|image: ${ACR_LOGIN_SERVER}/${service}:${IMAGE_TAG}|g" "$DEPLOYMENT_FILE"
           
-              mv "${DEPLOYMENT_FILE}.tmp" "$DEPLOYMENT_FILE"
-          
-              echo "✅ Updated ${service} deployment for ${TARGET_VERSION} environment"
-              echo "   Image: ${ACR_LOGIN_SERVER}/${service}:${IMAGE_TAG}"
-              echo ""
+              echo "✅ Updated ${service}-${TARGET_VERSION} image to: ${IMAGE_TAG}"
             else
               echo "⚠️  Deployment file not found: $DEPLOYMENT_FILE"
             fi
           done
           
+          echo ""
           echo "========================================="
-          echo "✅ All deployment manifests updated"
+          echo "✅ All target deployments updated"
           echo "========================================="
 
       - name: Deploy to Target Environment
