@@ -119,7 +119,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: payment-service-blue
+  name: payment-service
   namespace: ecom
   labels:
     app: payment-service
@@ -225,7 +225,7 @@ metadata:
     app: payment-service
     version: green
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       app: payment-service

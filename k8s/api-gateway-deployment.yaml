@@ -83,7 +83,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: api-gateway-blue
+  name: api-gateway
   namespace: ecom
   labels:
     app: api-gateway
@@ -129,7 +129,7 @@ metadata:
     app: api-gateway
     version: green
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       app: api-gateway
