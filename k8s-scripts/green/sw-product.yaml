@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: product-service
+  namespace: ecom
+  labels:
+    app: product-service
+spec:
+  selector:
+    app: product-service
+    version: green
+  ports:
+    - port: 8305
+      targetPort: 8305
+      protocol: TCP
+      name: http
+  type: ClusterIP

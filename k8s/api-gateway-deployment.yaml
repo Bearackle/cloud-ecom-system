@@ -24,7 +24,7 @@ spec:
     spec:
       containers:
         - name: api-gateway
-          image: ecomsystem01.azurecr.io/api-gateway:PLACEHOLDER
+          image: ecomsystem01.azurecr.io/api-gateway:9022a0b89ca45b5e79406704c10bbcc8657d7c5c
           imagePullPolicy: Always
           ports:
             - containerPort: 8303
@@ -36,10 +36,10 @@ spec:
               value: "registry-server"
           resources:
             requests:
-              memory: "512Mi"
-              cpu: "250m"
+              memory: "256Mi"
+              cpu: "100m"
             limits:
-              memory: "1Gi"
+              memory: "768Mi"
               cpu: "500m"
 ---
 apiVersion: apps/v1
@@ -51,7 +51,7 @@ metadata:
     app: api-gateway
     version: green
 spec:
-  replicas: 0
+  replicas: 1
   selector:
     matchLabels:
       app: api-gateway
@@ -64,7 +64,7 @@ spec:
     spec:
       containers:
         - name: api-gateway
-          image: ecomsystem01.azurecr.io/api-gateway:PLACEHOLDER
+          image: ecomsystem01.azurecr.io/api-gateway:9022a0b89ca45b5e79406704c10bbcc8657d7c5c
           imagePullPolicy: Always
           ports:
             - containerPort: 8303
@@ -76,10 +76,10 @@ spec:
               value: "registry-server"
           resources:
             requests:
-              memory: "512Mi"
-              cpu: "250m"
+              memory: "256Mi"
+              cpu: "100m"
             limits:
-              memory: "1Gi"
+              memory: "768Mi"
               cpu: "500m"
 ---
 apiVersion: v1
