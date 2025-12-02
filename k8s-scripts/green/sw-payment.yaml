@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: payment-service
+  namespace: ecom
+  labels:
+    app: payment-service
+spec:
+  selector:
+    app: payment-service
+    version: green
+  ports:
+    - port: 8307
+      targetPort: 8307
+      protocol: TCP
+      name: http
+  type: ClusterIP

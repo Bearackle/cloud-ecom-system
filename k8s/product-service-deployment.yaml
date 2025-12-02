@@ -24,7 +24,7 @@ spec:
     spec:
       containers:
         - name: product-service
-          image: ecomsystem01.azurecr.io/product-service:PLACEHOLDER
+          image: ecomsystem01.azurecr.io/product-service:9022a0b89ca45b5e79406704c10bbcc8657d7c5c
           ports:
             - containerPort: 8305
               name: http
@@ -85,10 +85,10 @@ spec:
                   key: STORAGE_CONTAINER_NAME
           resources:
             requests:
-              memory: "512Mi"
-              cpu: "250m"
+              memory: "256Mi"
+              cpu: "100m"
             limits:
-              memory: "1Gi"
+              memory: "768Mi"
               cpu: "500m"
 ---
 apiVersion: apps/v1
@@ -100,7 +100,7 @@ metadata:
     app: product-service
     version: green
 spec:
-  replicas: 0
+  replicas: 1
   selector:
     matchLabels:
       app: product-service
@@ -113,7 +113,7 @@ spec:
     spec:
       containers:
         - name: product-service
-          image: ecomsystem01.azurecr.io/product-service:PLACEHOLDER
+          image: ecomsystem01.azurecr.io/product-service:9022a0b89ca45b5e79406704c10bbcc8657d7c5c
           ports:
             - containerPort: 8305
               name: http
@@ -174,10 +174,10 @@ spec:
                   key: STORAGE_CONTAINER_NAME
           resources:
             requests:
-              memory: "512Mi"
-              cpu: "250m"
+              memory: "256Mi"
+              cpu: "100m"
             limits:
-              memory: "1Gi"
+              memory: "768Mi"
               cpu: "500m"
 ---
 apiVersion: v1
