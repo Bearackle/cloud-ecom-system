@@ -1,0 +1,86 @@
+server:
+  port: 8308
+
+spring:
+  application:
+    name: loyalty-service
+  
+  # Database Configuration - Tương tự order-service
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:5432/loyalty_db
+    username: ${LOYALTY_SERVICE_USER:loyalty-service}
+    password: ${LOYALTY_SERVICE_PASSWORD:loyalty-service-01}
+    driver-class-name: org.postgresql.Driver
+  
+  jpa:
+    hibernate:
+      ddl-auto: validate  # Sử dụng Flyway để quản lý schema
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  
+  # Flyway Migration
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    url: jdbc:postgresql://${DB_HOST:localhost}:5432/loyalty_db
+    user: ${LOYALTY_SERVICE_USER:loyalty-service}
+    password: ${LOYALTY_SERVICE_PASSWORD:loyalty-service-01}
+
+# Eureka Client - Đăng ký với Registry Server
+eureka:
+  client:
+    service-url:
+      defaultZone: http://${REGISTRY_HOST:localhost}:8301/eureka
+    fetch-registry: true
+    register-with-eureka: true
+  instance:
+    hostname: ${HOST_ADDR:localhost}
+
+# ============================================
+# BLOCKCHAIN CONFIGURATION
+# ============================================
+blockchain:
+  # Sepolia Testnet Configuration
+  sepolia:
+    # RPC URL - Sử dụng Infura hoặc Alchemy
+    # Đăng ký tại: https://infura.io hoặc https://alchemy.com
+    rpc-url: https://sepolia.infura.io/v3/${INFURA_API_KEY}
+    chain-id: 11155111
+  
+  # Smart Contract Addresses - Từ repo huyleuit/loyalty-token
+  # Đây là địa chỉ contract đã deploy trên Sepolia
+  contracts:
+    loyalty-token: ${LOYALTY_TOKEN_ADDRESS:0x66dD5fa4d114fA771894f41754D8150e202dA3F3}
+    loyalty-manager: ${LOYALTY_MANAGER_ADDRESS:0x943a04c30977f4Abaf3d11f9841B97541f924935}
+  
+  # Owner Wallet - Private key của owner để ký giao dịch
+  # QUAN TRỌNG: Không commit private key lên Git! 
+  owner:
+    private-key: ${OWNER_PRIVATE_KEY}
+  
+  # Gas Configuration
+  gas:
+    price-gwei: 20          # Gas price (Gwei)
+    limit: 500000           # Gas limit cho mỗi transaction
+
+# ============================================
+# IPFS/PINATA CONFIGURATION
+# ============================================
+# Đăng ký tài khoản tại: https://pinata.cloud
+pinata:
+  api-key: ${PINATA_API_KEY}
+  secret-key: ${PINATA_SECRET_KEY}
+  gateway-url: https://gateway.pinata.cloud/ipfs/
+  api-url: https://api.pinata.cloud
+
+# ============================================
+# LOYALTY TOKEN CONFIGURATION
+# ============================================
+loyalty:
+  token:
+    # Tỷ lệ quy đổi: 1 token = 10,000 VND
+    rate: 10000
+    # Số chữ số thập phân (ERC20 standard = 18)
+    decimals: 18
