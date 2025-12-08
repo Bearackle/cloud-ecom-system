@@ -8,8 +8,8 @@ spring:
   # Database Configuration - Tương tự order-service
   datasource:
     url: jdbc:postgresql://${DB_HOST:localhost}:5432/loyalty_db
-    username: ${LOYALTY_SERVICE_USER:loyalty-service}
-    password: ${LOYALTY_SERVICE_PASSWORD:loyalty-service-01}
+    username: ${LOYALTY_SERVICE_USER:postgres}
+    password: ${LOYALTY_SERVICE_PASSWORD:1}
     driver-class-name: org.postgresql.Driver
   
   jpa:
@@ -25,8 +25,8 @@ spring:
     enabled: true
     locations: classpath:db/migration
     url: jdbc:postgresql://${DB_HOST:localhost}:5432/loyalty_db
-    user: ${LOYALTY_SERVICE_USER:loyalty-service}
-    password: ${LOYALTY_SERVICE_PASSWORD:loyalty-service-01}
+    user: ${LOYALTY_SERVICE_USER:postgres}
+    password: ${LOYALTY_SERVICE_PASSWORD:1}
 
 # Eureka Client - Đăng ký với Registry Server
 eureka:
