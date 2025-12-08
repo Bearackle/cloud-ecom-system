@@ -34,7 +34,7 @@ import java.util.Map;
  */
 @Slf4j
 @RestController
-@RequestMapping("/api/v1/rewards")
+@RequestMapping("/rewards")
 @RequiredArgsConstructor
 public class RewardController {
 

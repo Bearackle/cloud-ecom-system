@@ -35,7 +35,7 @@ import java.util.List;
  */
 @Slf4j
 @RestController
-@RequestMapping("/api/v1/certificates")
+@RequestMapping("/certificates")
 @RequiredArgsConstructor
 public class CertificateController {
 

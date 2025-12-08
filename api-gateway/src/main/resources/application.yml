@@ -1,5 +1,6 @@
 server:
     port: 8303
+    forward-headers-strategy: framework
 spring:
     application:
         name: api-gateway
@@ -42,6 +43,10 @@ spring:
                           - Path=/payments/**
                         filters:
                           - StripPrefix=0
+                      - id: loyalty-service
+                        uri: lb://LOYALTY-SERVICE
+                        predicates:
+                          - Path=/certificates/**,/customers/**,/health/**,/ipfs/**,/rewards/**
 eureka:
     client:
         service-url:
@@ -78,6 +83,11 @@ secure:
           - /payments/return-callback
           - /actuator/**
           - /images/**
+          - /rewards/**
+          - /certificates/**
+          - /customers/**
+          - /health/**
+          - /ipfs/**
 logging:
     level:
         org.springframework.cloud.gateway: DEBUG
