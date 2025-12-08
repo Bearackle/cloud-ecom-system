@@ -19,4 +19,5 @@ public class UserInfoResponse{
     private String email;
     private String phoneNumber;
     private String language;
+    private String walletAddress;
 }

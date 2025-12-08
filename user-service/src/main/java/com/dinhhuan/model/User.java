@@ -28,6 +28,8 @@ public class User {
     @Column(name = "lang", nullable = true)
     @Builder.Default
     private String language = "vi";
+    @Column(name = "wallet_address", nullable = true, length = 42)
+    private String walletAddress;
     @Column(name = "registration_date", nullable = false)
     private LocalDateTime registrationDate;
     @Column(name = "updated_at", nullable = false)
