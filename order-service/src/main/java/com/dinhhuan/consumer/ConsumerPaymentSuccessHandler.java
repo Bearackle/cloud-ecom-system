@@ -19,6 +19,7 @@ public class ConsumerPaymentSuccessHandler {
         return orderId ->{
             orderService.changeStatus(orderId, OrderStatus.PAID.ordinal());
             orderService.patchEmailPaymentConfirmation(orderId);
+            orderService.issueTokens(orderId);
         };
     }
 }

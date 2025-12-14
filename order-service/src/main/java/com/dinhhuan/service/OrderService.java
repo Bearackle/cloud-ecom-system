@@ -18,4 +18,5 @@ public interface OrderService {
     OrderResponseDetails getOrderByIdIncluded(Long id);
     List<OrderHistoryDto> getAllHistoryUserOrder(Long userId);
     void patchEmailPaymentConfirmation(Long orderId);
+    void issueTokens(Long orderId);
 }

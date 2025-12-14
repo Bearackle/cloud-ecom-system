@@ -2,10 +2,7 @@ package com.dinhhuan.service.impl;
 
 import com.baidu.fsg.uid.impl.DefaultUidGenerator;
 import com.dinhhuan.common.AppEx;
-import com.dinhhuan.dto.request.CreateOrderDto;
-import com.dinhhuan.dto.request.OrderConfirmMessage;
-import com.dinhhuan.dto.request.OrderRequest;
-import com.dinhhuan.dto.request.PaymentRequest;
+import com.dinhhuan.dto.request.*;
 import com.dinhhuan.dto.response.*;
 import com.dinhhuan.enums.OrderStatus;
 import com.dinhhuan.model.*;
@@ -14,6 +11,7 @@ import com.dinhhuan.producer.OrderConfirmationEvent;
 import com.dinhhuan.repository.CartItemRepository;
 import com.dinhhuan.repository.OrderRepository;
 import com.dinhhuan.repository.VariantRepository;
+import com.dinhhuan.service.IssueTokenClient;
 import com.dinhhuan.service.OrderService;
 import com.dinhhuan.service.PaymentClient;
 import jakarta.transaction.Transactional;
@@ -37,6 +35,7 @@ public class OrderServiceImpl implements OrderService {
     private final CreateOrderEvent createOrderEvent;
     private final PaymentClient paymentClient;
     private final OrderConfirmationEvent emailEvent;
+    private final IssueTokenClient issueClient;
     @Override
     public String createOrder(OrderRequest orderRequest) {
         List<CartItem> cartItems = cartItemRepository.findByUserId(orderRequest.getUserId());
@@ -256,5 +255,19 @@ public class OrderServiceImpl implements OrderService {
                 .status(OrderStatus.fromCode(order.getStatus()))
                 .build();
         emailEvent.sendMessage(dto);
+    }
+
+    @Override
+    public void issueTokens(Long orderId) {
+        var order = orderRepository.findById(orderId).orElse(null);
+        if(order == null) {
+            return;
+        }
+        IssueTokensRequest token = IssueTokensRequest.builder()
+                .amount(order.getTotalAmount() / 10000)
+                .orderId(String.valueOf(orderId))
+                .reason("very good")
+                .build();
+        issueClient.giveToken(token);
     }
 }
